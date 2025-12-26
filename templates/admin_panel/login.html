@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - EventAdmin Pro</title>
+
+    <!-- Load Django static files -->
+    {% load static %}
+
+    <!-- Load your compiled Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Load Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated GIF Background */
+        .gif-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        .gif-background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://i.gifer.com/origin/6e/6ec2696a9bcb9b6faf0e5a9cb3bb3f0a_w200.gif');
+            /* You can replace with your own GIF */
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .gif-background::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+            backdrop-filter: blur(2px);
+        }
+
+        /* Additional floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: float-particle 20s infinite linear;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            25% {
+                transform: translate(2%, 1%) scale(1.02);
+            }
+
+            50% {
+                transform: translate(-1%, 2%) scale(0.98);
+            }
+
+            75% {
+                transform: translate(1%, -1%) scale(1.01);
+            }
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100px) translateX(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.95);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.7);
+        }
+
+        .input-glow:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
+        .shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to right,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.3) 50%,
+                    rgba(255, 255, 255, 0) 100%);
+            transform: rotate(30deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%) rotate(30deg);
+            }
+
+            100% {
+                transform: translateX(100%) rotate(30deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+    <!-- Animated GIF Background -->
+    <div class="gif-background"></div>
+
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Main Container - Centered -->
+    <div class="min-h-screen flex items-center justify-center p-4 md:p-8 lg:p-12">
+        <div class="w-full max-w-md mx-auto slide-in">
+            <!-- Security Badge -->
+            <!-- <div class="flex justify-center mb-8">
+                <div class="relative">
+                    <div
+                        class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl floating shimmer">
+                        <i class="fas fa-lock-shield text-white text-3xl"></i>
+                    </div>
+                    <div
+                        class="absolute inset-0 w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl opacity-30 pulse-ring">
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- Login Card -->
+            <div class="glass-effect rounded-3xl shadow-2xl overflow-hidden border border-white/20">
+                <!-- Card Header -->
+                <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-8 text-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-black/10"></div>
+                    <div class="relative z-10">
+                        <h1 class="text-3xl font-bold text-white mb-2">EventAdmin</h1>
+                        <p class="text-indigo-100 font-medium">Secure Admin Dashboard</p>
+                    </div>
+                    <div class="absolute -right-8 -top-8 w-24 h-24 bg-white/10 rounded-full"></div>
+                    <div class="absolute -left-8 -bottom-8 w-24 h-24 bg-white/10 rounded-full"></div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-8 md:p-10 bg-white/80 backdrop-blur-sm">
+                    {% if form.non_field_errors %}
+                    <div
+                        class="mb-6 bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-500 p-4 rounded-r-lg">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-red-500 text-lg"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-red-700 text-sm font-medium">
+                                    {{ form.non_field_errors }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <form method="POST" action="{% url 'admin_login' %}" class="space-y-6" id="loginForm">
+                        {% csrf_token %}
+
+                        <!-- Username Field -->
+                        <div class="space-y-2">
+                            <label class="text-sm font-semibold text-gray-700 flex items-center">
+                                <i class="fas fa-user-circle text-indigo-500 mr-2"></i>
+                                Username
+                            </label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i
+                                        class="fas fa-user text-gray-400 group-focus-within:text-indigo-500 transition-colors"></i>
+                                </div>
+                                <input type="text" name="username" required
+                                    class="w-full pl-10 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-indigo-500 input-glow transition-all duration-300 bg-white/70 backdrop-blur-sm text-gray-800 placeholder-gray-500"
+                                    placeholder="Enter username" autocomplete="username" autofocus>
+                            </div>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-semibold text-gray-700 flex items-center">
+                                    <i class="fas fa-key text-indigo-500 mr-2"></i>
+                                    Password
+                                </label>
+                                <button type="button" id="togglePassword"
+                                    class="text-xs text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
+                                    <i class="fas fa-eye mr-1"></i>Show
+                                </button>
+                            </div>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i
+                                        class="fas fa-lock text-gray-400 group-focus-within:text-indigo-500 transition-colors"></i>
+                                </div>
+                                <input type="password" name="password" id="password" required
+                                    class="w-full pl-10 pr-12 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-indigo-500 input-glow transition-all duration-300 bg-white/70 backdrop-blur-sm text-gray-800 placeholder-gray-500"
+                                    placeholder="••••••••" autocomplete="current-password">
+                            </div>
+                        </div>
+
+                        <!-- Remember Me -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input id="remember" name="remember" type="checkbox"
+                                    class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded cursor-pointer">
+                                <label for="remember" class="ml-2 text-sm text-gray-700 cursor-pointer">
+                                    Remember me
+                                </label>
+                            </div>
+                            <a href="#"
+                                class="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">
+                                Forgot Password?
+                            </a>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="submitBtn"
+                            class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl btn-glow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 flex items-center justify-center group shimmer">
+                            <span class="flex items-center">
+                                <i class="fas fa-sign-in-alt mr-3 text-lg"></i>
+                                <span id="buttonText">Sign In</span>
+                            </span>
+                            <i
+                                class="fas fa-arrow-right ml-2 opacity-0 group-hover:opacity-100 group-hover:ml-3 transition-all duration-300"></i>
+                        </button>
+                    </form>
+
+                    
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="mt-8 text-center">
+                <p class="text-sm text-white/90">
+                    © {% now "Y" %} EventAdmin Pro v2.1.0 • All rights reserved
+                </p>
+                <p class="text-xs text-white/70 mt-1">
+                    <i class="fas fa-shield-alt mr-1"></i> Secured by Django Admin
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Toggle password visibility
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+
+            togglePassword?.addEventListener('click', function (e) {
+                e.preventDefault();
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+
+                const icon = this.querySelector('i');
+                const text = type === 'text' ? 'Hide' : 'Show';
+                icon.className = type === 'text' ? 'fas fa-eye-slash mr-1' : 'fas fa-eye mr-1';
+                this.innerHTML = `<i class="${type === 'text' ? 'fas fa-eye-slash' : 'fas fa-eye'} mr-1"></i>${text}`;
+            });
+
+            // Form submission animation
+            const loginForm = document.getElementById('loginForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const buttonText = document.getElementById('buttonText');
+
+            loginForm?.addEventListener('submit', function () {
+                submitBtn.disabled = true;
+                submitBtn.classList.remove('hover:-translate-y-1', 'hover:shadow-2xl');
+                submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
+                if (buttonText) {
+                    buttonText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Authenticating...';
+                }
+
+                // Add ripple effect
+                const ripple = document.createElement('span');
+                ripple.classList.add('absolute', 'inset-0', 'bg-white/20', 'rounded-xl', 'animate-ripple');
+                submitBtn.appendChild(ripple);
+
+                setTimeout(() => ripple.remove(), 600);
+            });
+
+            // Create floating particles
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+
+                // Random properties
+                const size = Math.random() * 20 + 5;
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 10;
+                const left = Math.random() * 100;
+
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${left}%`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.opacity = Math.random() * 0.4 + 0.1;
+
+                particlesContainer.appendChild(particle);
+            }
+
+            // Add floating animation to blobs
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes blob {
+                    0% { transform: translate(0px, 0px) scale(1); }
+                    33% { transform: translate(30px, -50px) scale(1.1); }
+                    66% { transform: translate(-20px, 20px) scale(0.9); }
+                    100% { transform: translate(0px, 0px) scale(1); }
+                }
+                @keyframes ripple {
+                    to { transform: scale(2); opacity: 0; }
+                }
+                .animate-blob { animation: blob 7s infinite; }
+                .animation-delay-2000 { animation-delay: 2s; }
+                .animation-delay-4000 { animation-delay: 4s; }
+                .animate-ripple { animation: ripple 0.6s linear; }
+            `;
+            document.head.appendChild(style);
+
+            // Input focus effects
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function () {
+                    this.parentElement.classList.add('glow');
+                });
+
+                input.addEventListener('blur', function () {
+                    this.parentElement.classList.remove('glow');
+                });
+            });
+
+            // Auto-focus username if empty
+            const usernameInput = document.querySelector('input[name="username"]');
+            if (usernameInput && !usernameInput.value) {
+                setTimeout(() => usernameInput.focus(), 300);
+            }
+
+            // Add mouse move effect
+            document.addEventListener('mousemove', (e) => {
+                const x = (e.clientX / window.innerWidth) * 100;
+                const y = (e.clientY / window.innerHeight) * 100;
+
+                const gifBg = document.querySelector('.gif-background::before');
+                if (gifBg) {
+                    document.querySelector('.gif-background').style.setProperty('--mouse-x', `${x}%`);
+                    document.querySelector('.gif-background').style.setProperty('--mouse-y', `${y}%`);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

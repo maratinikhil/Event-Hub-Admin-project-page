@@ -1,0 +1,198 @@
+<!-- admin_panel/templates/admin_panel/sidebar.html -->
+<aside class="w-64 bg-white text-gray-800 flex flex-col h-screen shadow-lg">
+    <!-- Logo -->
+    <div class="p-6 border-b border-gray-200 flex-shrink-0">
+        <div class="flex items-center space-x-3">
+            <div class="bg-blue-600 p-2 rounded-lg">
+                <i class="fas fa-calendar-alt text-xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-gray-900">EventAdmin</h1>
+                <p class="text-gray-500 text-sm">Dashboard</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 p-4 overflow-y-auto custom-scrollbar">
+        <ul class="space-y-2">
+            <li>
+                <a href="/admin-panel/"
+                    class="flex items-center space-x-3 p-3 rounded-lg sidebar-link {% if request.path == '/admin-panel/' %}bg-blue-50 text-blue-600 border-r-4 border-blue-600{% else %}hover:bg-gray-100{% endif %} transition-colors duration-200">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <!-- Management -->
+            <li class="mt-6">
+                <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider px-3 mb-2">Management</p>
+            </li>
+            <li>
+                <a href="/admin/eventapp/event/"
+                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Events</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin/eventapp/movie/"
+                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <i class="fas fa-film"></i>
+                    <span>Movies</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin/eventapp/comedyshow/"
+                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <i class="fas fa-theater-masks"></i>
+                    <span>Comedy Shows</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin/eventapp/liveconcert/"
+                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <i class="fas fa-music"></i>
+                    <span>Concerts</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin/eventapp/amusementpark/"
+                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <i class="fas fa-ferris-wheel"></i>
+                    <span>Amusement Parks</span>
+                </a>
+            </li>
+
+            <!-- Reports -->
+            <li class="mt-6">
+                <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider px-3 mb-2">Analytics</p>
+            </li>
+            <li>
+                <a href="/admin-panel/reports/events/"
+                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Event Reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin-panel/reports/bookings/"
+                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Booking Analytics</span>
+                </a>
+            </li>
+
+            <!-- System -->
+            <li class="mt-6">
+                <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider px-3 mb-2">System</p>
+            </li>
+            <li>
+                <a href="/admin-panel/logout/"
+                    class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 text-red-500 hover:text-red-600 transition-colors duration-200">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Footer -->
+    <div class="p-4 border-t border-gray-200 flex-shrink-0">
+        <div class="text-center text-gray-500 text-sm">
+            <p>EventAdmin v1.0</p>
+            <p class="text-xs mt-1">© 2024 EventProject</p>
+        </div>
+    </div>
+</aside>
+
+<style>
+    /* Enhanced custom scrollbar for white theme */
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #D1D5DB #FFFFFF;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #F9FAFB;
+        border-radius: 10px;
+        margin: 4px 0;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #D1D5DB, #9CA3AF);
+        border-radius: 10px;
+        border: 2px solid #F9FAFB;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #9CA3AF, #6B7280);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:active {
+        background: linear-gradient(180deg, #6B7280, #4B5563);
+    }
+
+    /* For Firefox */
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #D1D5DB #FFFFFF;
+    }
+
+    /* Hide scrollbar when not hovering */
+    .custom-scrollbar {
+        overflow-y: auto;
+        padding-right: 2px;
+    }
+
+    /* Optional: Scrollbar corner */
+    .custom-scrollbar::-webkit-scrollbar-corner {
+        background: #F9FAFB;
+    }
+
+    /* Smooth scrolling */
+    .custom-scrollbar {
+        scroll-behavior: smooth;
+    }
+
+    /* Prevent content shift when scrollbar appears */
+    .custom-scrollbar {
+        overflow-y: overlay;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        background-color: transparent;
+    }
+
+    /* Add some padding to prevent content from touching scrollbar */
+    .custom-scrollbar ul {
+        padding-right: 4px;
+    }
+
+    /* Active state styling for white theme */
+    .sidebar-link.bg-blue-50 {
+        font-weight: 600;
+    }
+
+    .sidebar-link.bg-blue-50 i {
+        color: #3B82F6;
+    }
+</style>
+
+<script>
+    // Optional: Smooth scroll to active link
+    document.addEventListener('DOMContentLoaded', function () {
+        const activeLink = document.querySelector('.sidebar-link.bg-blue-50');
+        if (activeLink) {
+            // Scroll to active link with smooth behavior
+            activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+</script>
