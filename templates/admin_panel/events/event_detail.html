@@ -1,0 +1,251 @@
+{% extends 'admin_panel/base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="{% url 'admin_events_list' %}" 
+           class="text-blue-600 hover:text-blue-800 flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Events
+        </a>
+    </div>
+
+    <!-- Event Header -->
+    <div class="bg-white rounded-xl shadow overflow-hidden mb-6">
+        <div class="p-6">
+            <div class="flex justify-between items-start">
+                <div class="flex-1">
+                    <h1 class="text-2xl font-bold text-gray-800">{{ event.name }}</h1>
+                    <div class="flex items-center mt-2 space-x-4">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                            <i class="fas fa-calendar mr-1"></i> {{ event.event_type|title }}
+                        </span>
+                        <span class="text-gray-600">
+                            <i class="far fa-clock mr-1"></i> {{ event.date|date:"F d, Y" }} at {{ event.time }}
+                        </span>
+                        {% if event.date >= today %}
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                            <i class="fas fa-check-circle mr-1"></i> Active
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                            <i class="fas fa-times-circle mr-1"></i> Past Event
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <a href="{% url 'edit_event' event.id %}" 
+                       class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center">
+                        <i class="fas fa-edit mr-2"></i> Edit
+                    </a>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 flex items-center">
+                        <i class="fas fa-ellipsis-h mr-2"></i> More
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Column - Event Details -->
+        <div class="lg:col-span-2">
+            <!-- Event Image -->
+            {% if event.image %}
+            <div class="bg-white rounded-xl shadow overflow-hidden mb-6">
+                <img src="{{ event.image.url }}" alt="{{ event.name }}" 
+                     class="w-full h-64 object-cover">
+            </div>
+            {% endif %}
+
+            <!-- Details Card -->
+            <div class="bg-white rounded-xl shadow p-6 mb-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Event Details</h3>
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-medium text-gray-700 mb-2">Description</h4>
+                        <p class="text-gray-600">{{ event.description }}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Location</h4>
+                            <div class="space-y-1">
+                                <p class="text-gray-600 flex items-center">
+                                    <i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>
+                                    {{ event.location }}
+                                </p>
+                                <p class="text-gray-500 text-sm">{{ event.address }}</p>
+                                <p class="text-gray-500 text-sm">{{ event.city }}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Date & Time</h4>
+                            <div class="space-y-1">
+                                <p class="text-gray-600 flex items-center">
+                                    <i class="far fa-calendar mr-2 text-gray-400"></i>
+                                    {{ event.date|date:"l, F d, Y" }}
+                                </p>
+                                <p class="text-gray-600 flex items-center">
+                                    <i class="far fa-clock mr-2 text-gray-400"></i>
+                                    {{ event.time }}
+                                </p>
+                                <p class="text-gray-500 text-sm">
+                                    Duration: {{ event.duration|default:"3 hours" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings Table -->
+            <div class="bg-white rounded-xl shadow">
+                <div class="p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Recent Bookings</h3>
+                    <p class="text-gray-600 text-sm">Latest bookings for this event</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Booking ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for booking in bookings|slice:":5" %}
+                            <tr>
+                                <td class="px-6 py-4 text-sm text-gray-900">#{{ booking.booking_id }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900">{{ booking.user.username }}</div>
+                                    <div class="text-sm text-gray-500">{{ booking.user.email }}</div>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500">
+                                    {{ booking.booking_date|date:"M d, Y" }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900">
+                                    ₹{{ booking.total_amount|floatformat:2 }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if booking.status == 'confirmed' %}
+                                    <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                                        Confirmed
+                                    </span>
+                                    {% elif booking.status == 'pending' %}
+                                    <span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
+                                        Pending
+                                    </span>
+                                    {% else %}
+                                    <span class="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                                        Cancelled
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                                    No bookings yet
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if bookings.count > 5 %}
+                <div class="p-4 border-t border-gray-200 text-center">
+                    <a href="#" class="text-blue-600 hover:text-blue-800 text-sm">
+                        View all {{ bookings.count }} bookings
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Column - Stats & Actions -->
+        <div class="lg:col-span-1">
+            <!-- Stats Card -->
+            <div class="bg-white rounded-xl shadow p-6 mb-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Event Statistics</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-600">Total Bookings</p>
+                            <h4 class="text-2xl font-bold text-gray-800">{{ total_bookings }}</h4>
+                        </div>
+                        <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                            <i class="fas fa-ticket-alt text-blue-600"></i>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-600">Total Revenue</p>
+                            <h4 class="text-2xl font-bold text-green-600">₹{{ total_revenue|floatformat:2 }}</h4>
+                        </div>
+                        <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
+                            <i class="fas fa-rupee-sign text-green-600"></i>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-600">Available Seats</p>
+                            <h4 class="text-2xl font-bold text-gray-800">{{ available_seats }}</h4>
+                        </div>
+                        <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
+                            <i class="fas fa-users text-gray-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-xl shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+                <div class="space-y-3">
+                    <a href="#" class="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
+                                <i class="fas fa-edit text-blue-600"></i>
+                            </div>
+                            <span class="text-gray-700">Edit Event Details</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </a>
+                    <a href="#" class="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center mr-3">
+                                <i class="fas fa-share-alt text-green-600"></i>
+                            </div>
+                            <span class="text-gray-700">Share Event</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </a>
+                    <a href="#" class="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center mr-3">
+                                <i class="fas fa-chart-bar text-purple-600"></i>
+                            </div>
+                            <span class="text-gray-700">View Analytics</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </a>
+                    <a href="#" class="flex items-center justify-between p-3 rounded-lg border border-red-200 hover:bg-red-50">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center mr-3">
+                                <i class="fas fa-trash text-red-600"></i>
+                            </div>
+                            <span class="text-red-700">Delete Event</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-red-400"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

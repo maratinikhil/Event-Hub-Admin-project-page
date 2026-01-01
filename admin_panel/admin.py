@@ -13,7 +13,7 @@ from .models import (
 # =============================================
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):  # ⭐ Changed from CustomUserAdmin to UserAdmin
+class UserAdmin(admin.ModelAdmin):  
     list_display = ('email', 'firstname', 'lastname', 'mobile', 'reset_token_status')
     search_fields = ('email', 'firstname', 'lastname', 'mobile')
     readonly_fields = ('password', 'reset_token', 'reset_token_created_at')

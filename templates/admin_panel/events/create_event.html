@@ -1,0 +1,378 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Create New Event</h1>
+        <p class="text-gray-600">Add a new event to your platform</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Column - Form -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow p-6">
+                <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+
+                    <!-- Event Basic Info -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Event Information</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Event Name
+                                    *</label>
+                                <input type="text" id="name" name="name" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="Enter event name" value="{{ form.name.value|default:'' }}">
+                            </div>
+                            <div>
+                                <label for="description"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+                                <textarea id="description" name="description" rows="4" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="Describe your event...">{{ form.description.value|default:'' }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date & Time -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Date & Time</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date *</label>
+                                <input type="date" id="date" name="date" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    value="{{ form.date.value|default:'' }}">
+                            </div>
+                            <div>
+                                <label for="time" class="block text-sm font-medium text-gray-700 mb-1">Time *</label>
+                                <input type="time" id="time" name="time" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    value="{{ form.time.value|default:'' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Location</h3>
+                        <div>
+                            <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Venue Location
+                                *</label>
+                            <input type="text" id="location" name="location" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="e.g., Grand Hotel Ballroom, 123 Main Street"
+                                value="{{ form.location.value|default:'' }}">
+                        </div>
+                    </div>
+
+                    <!-- Seating & Pricing -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Seating & Pricing</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="total_seats" class="block text-sm font-medium text-gray-700 mb-1">Total
+                                    Seats *</label>
+                                <input type="number" id="total_seats" name="total_seats" min="1" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="100" value="{{ form.total_seats.value|default:'' }}">
+                            </div>
+                            <div>
+                                <label for="available_seats"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Available Seats</label>
+                                <input type="number" id="available_seats" name="available_seats" min="0"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="Will auto-calculate"
+                                    value="{{ form.available_seats.value|default:'' }}">
+                                <p class="text-xs text-gray-500 mt-1">Leave empty to auto-set as total seats</p>
+                            </div>
+                            <div>
+                                <label for="ticket_price" class="block text-sm font-medium text-gray-700 mb-1">Ticket
+                                    Price (₹) *</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-2 text-gray-500">₹</span>
+                                    <input type="number" id="ticket_price" name="ticket_price" step="0.01" min="0"
+                                        required
+                                        class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="0.00" value="{{ form.ticket_price.value|default:'' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Event Image</h3>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                            <div id="image-preview" class="hidden mb-4">
+                                <img id="preview" class="max-w-full h-48 mx-auto rounded-lg object-cover">
+                            </div>
+                            <input type="file" id="image" name="image" accept="image/*" class="hidden"
+                                onchange="previewImage(event)">
+                            <label for="image" class="cursor-pointer">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-gray-600">Click to upload event image</p>
+                                <p class="text-sm text-gray-500 mt-1">PNG, JPG, GIF up to 5MB</p>
+                            </label>
+                            {% if form.image.value %}
+                            <div class="mt-4">
+                                <p class="text-sm text-gray-600">Current image:</p>
+                                <img src="{{ form.image.value.url }}" class="h-32 mx-auto rounded-lg mt-2">
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Form Errors -->
+                    {% if form.errors %}
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <h4 class="font-medium text-red-800 mb-2">Please correct the following errors:</h4>
+                        <ul class="list-disc list-inside text-sm text-red-600">
+                            {% for field in form %}
+                            {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <!-- Submit Button -->
+                    <div class="pt-4 border-t border-gray-200">
+                        <div class="flex justify-end space-x-3">
+                            <a href="{% url 'admin_events_list' %}"
+                                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                Cancel
+                            </a>
+                            <button type="submit"
+                                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500">
+                                Create Event
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Column - Tips & Preview -->
+        <div class="lg:col-span-1">
+            <!-- Tips Card -->
+            <div class="bg-white rounded-xl shadow p-6 mb-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Tips for a great event</h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-sm text-gray-600">Use a clear, high-quality image (1200x630px
+                            recommended)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-sm text-gray-600">Provide detailed description including agenda</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-sm text-gray-600">Set realistic seating capacity</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-sm text-gray-600">Include venue directions and parking info</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span class="text-sm text-gray-600">Specify refund/cancellation policy</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Event Preview -->
+            <div class="bg-white rounded-xl shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Event Preview</h3>
+                <div id="event-preview" class="space-y-4">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg mb-3" id="preview-image">
+                            <div class="flex items-center justify-center text-gray-400">
+                                <i class="fas fa-image text-3xl"></i>
+                            </div>
+                        </div>
+                        <h4 id="preview-name" class="font-medium text-gray-800">Event Name</h4>
+                        <p id="preview-date" class="text-sm text-gray-600 mt-1">Date: Not set</p>
+                        <p id="preview-location" class="text-sm text-gray-600">Location: Not set</p>
+                        <p id="preview-seats" class="text-sm text-gray-600">Seats: Not set</p>
+                        <p id="preview-price" class="text-sm text-gray-600">Price: Not set</p>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        <p>This is how your event will appear to users.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="bg-white rounded-xl shadow p-6 mt-6">
+                <h4 class="font-medium text-gray-900 mb-3">Event Statistics</h4>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Total Events</span>
+                        <span class="font-medium">{{ total_events }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Upcoming</span>
+                        <span class="font-medium text-green-600">{{ upcoming_events }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Average Price</span>
+                        <span class="font-medium">₹{{ avg_price|floatformat:2 }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Avg. Seats</span>
+                        <span class="font-medium">{{ avg_seats|floatformat:0 }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Image preview
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('preview');
+        const previewContainer = document.getElementById('image-preview');
+        const previewImageBox = document.getElementById('preview-image');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                previewContainer.classList.remove('hidden');
+
+                // Update preview box
+                previewImageBox.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded-lg">`;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Real-time form preview
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+        const inputs = ['name', 'date', 'location', 'total_seats', 'ticket_price'];
+
+        inputs.forEach(fieldName => {
+            const input = document.getElementById(fieldName);
+            if (input) {
+                input.addEventListener('input', updatePreview);
+            }
+        });
+
+        // Set default date to tomorrow
+        const dateInput = document.getElementById('date');
+        if (dateInput && !dateInput.value) {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const formattedDate = tomorrow.toISOString().split('T')[0];
+            dateInput.value = formattedDate;
+            dateInput.min = new Date().toISOString().split('T')[0]; // Prevent past dates
+        }
+
+        // Set default time to 6:00 PM
+        const timeInput = document.getElementById('time');
+        if (timeInput && !timeInput.value) {
+            timeInput.value = '18:00';
+        }
+
+        // Auto-set available seats to total seats
+        const totalSeatsInput = document.getElementById('total_seats');
+        const availableSeatsInput = document.getElementById('available_seats');
+
+        if (totalSeatsInput && availableSeatsInput) {
+            totalSeatsInput.addEventListener('input', function () {
+                if (!availableSeatsInput.value || availableSeatsInput.value === '') {
+                    availableSeatsInput.value = this.value;
+                }
+            });
+        }
+
+        // Initial preview update
+        updatePreview();
+    });
+
+    function updatePreview() {
+        // Update name
+        const nameInput = document.getElementById('name');
+        const previewName = document.getElementById('preview-name');
+        if (nameInput && previewName) {
+            previewName.textContent = nameInput.value || 'Event Name';
+        }
+
+        // Update date
+        const dateInput = document.getElementById('date');
+        const previewDate = document.getElementById('preview-date');
+        if (dateInput && previewDate) {
+            if (dateInput.value) {
+                const date = new Date(dateInput.value);
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                previewDate.textContent = `Date: ${formattedDate}`;
+            } else {
+                previewDate.textContent = 'Date: Not set';
+            }
+        }
+
+        // Update location
+        const locationInput = document.getElementById('location');
+        const previewLocation = document.getElementById('preview-location');
+        if (locationInput && previewLocation) {
+            previewLocation.textContent = `Location: ${locationInput.value || 'Not set'}`;
+        }
+
+        // Update seats
+        const seatsInput = document.getElementById('total_seats');
+        const previewSeats = document.getElementById('preview-seats');
+        if (seatsInput && previewSeats) {
+            previewSeats.textContent = `Total Seats: ${seatsInput.value || 'Not set'}`;
+        }
+
+        // Update price
+        const priceInput = document.getElementById('ticket_price');
+        const previewPrice = document.getElementById('preview-price');
+        if (priceInput && previewPrice) {
+            previewPrice.textContent = `Price: ₹${priceInput.value || '0.00'}`;
+        }
+    }
+
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function (e) {
+        const dateInput = document.getElementById('date');
+        const today = new Date().toISOString().split('T')[0];
+
+        if (dateInput.value < today) {
+            e.preventDefault();
+            alert('Event date cannot be in the past.');
+            dateInput.focus();
+            return false;
+        }
+
+        const totalSeats = document.getElementById('total_seats');
+        const availableSeats = document.getElementById('available_seats');
+
+        if (availableSeats.value && parseInt(availableSeats.value) > parseInt(totalSeats.value)) {
+            e.preventDefault();
+            alert('Available seats cannot exceed total seats.');
+            availableSeats.focus();
+            return false;
+        }
+
+        return true;
+    });
+</script>
+{% endblock %}

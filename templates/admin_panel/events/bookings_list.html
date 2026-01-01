@@ -1,0 +1,232 @@
+{% extends 'admin_panel/base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">{{ page_title }}</h1>
+            <p class="text-gray-600">Manage all event bookings</p>
+        </div>
+        <div class="flex space-x-3">
+            <div class="relative">
+                <form method="GET" class="flex items-center">
+                    <input type="text" name="search" value="{{ search_query }}" placeholder="Search bookings..."
+                        class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    {% if search_query %}
+                    <a href="{% url 'admin_event_bookings' %}" class="ml-2 text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </a>
+                    {% endif %}
+                </form>
+            </div>
+            <div class="flex space-x-2">
+                <select id="statusFilter"
+                    class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                    <option value="">All Status</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="confirmed" {% if status_filter == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                    <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+                    <i class="fas fa-download mr-2"></i> Export
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow p-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-600">Total Bookings</p>
+                    <h3 class="text-2xl font-bold text-gray-800">{{ total_bookings }}</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                    <i class="fas fa-ticket-alt text-blue-600"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-600">Pending</p>
+                    <h3 class="text-2xl font-bold text-yellow-600">{{ pending_bookings }}</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center">
+                    <i class="fas fa-clock text-yellow-600"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-600">Confirmed</p>
+                    <h3 class="text-2xl font-bold text-green-600">{{ confirmed_bookings }}</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
+                    <i class="fas fa-check-circle text-green-600"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-600">Cancelled</p>
+                    <h3 class="text-2xl font-bold text-red-600">{{ cancelled_bookings }}</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center">
+                    <i class="fas fa-times-circle text-red-600"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bookings Table -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Booking ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Customer</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Amount</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for booking in bookings %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="font-medium text-gray-900">#{{ booking.booking_id|default:booking.id }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                {% if booking.event and booking.event.image %}
+                                <div class="h-10 w-10 flex-shrink-0">
+                                    <img class="h-10 w-10 rounded-lg object-cover" src="{{ booking.event.image.url }}"
+                                        alt="{{ booking.event.name }}">
+                                </div>
+                                {% endif %}
+                                <div class="ml-4">
+                                    <div class="font-medium text-gray-900">
+                                        {% if booking.event %}
+                                        {{ booking.event.name|default:"Unknown Event" }}
+                                        {% else %}
+                                        
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-sm text-gray-500">
+                                        {% if booking.event %}
+                                        {{ booking.event.date|date:"M d, Y"|default:"" }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="font-medium text-gray-900">{{ booking.user.username|default:"Unknown User" }}
+                            </div>
+                            <div class="text-sm text-gray-500">{{ booking.user.email|default:"" }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ booking.booking_date|date:"M d, Y"|default:"-" }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="font-medium text-gray-900">₹{{ booking.total_amount|floatformat:2|default:"0.00" }}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if booking.status == 'confirmed' %}
+                            <span
+                                class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Confirmed
+                            </span>
+                            {% elif booking.status == 'pending' %}
+                            <span
+                                class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                Pending
+                            </span>
+                            {% elif booking.status == 'cancelled' %}
+                            <span
+                                class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                Cancelled
+                            </span>
+                            {% else %}
+                            <span
+                                class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                {{ booking.status|default:"Unknown" }}
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <!-- FIXED: Check if booking has event and event has id -->
+                            {% if booking.event and booking.event.id %}
+                            <a href="{% url 'admin_event_detail' booking.event.id %}"
+                                class="text-blue-600 hover:text-blue-900 mr-3">
+                                <i class="fas fa-calendar mr-1"></i> Event
+                            </a>
+                            {% endif %}
+
+                            <a href="{% url 'admin_event_booking_detail' booking.id %}"
+                                class="text-green-600 hover:text-green-900 mr-3">
+                                <i class="fas fa-eye mr-1"></i> View
+                            </a>
+
+                            <a href="#" class="text-purple-600 hover:text-purple-900">
+                                <i class="fas fa-edit mr-1"></i> Edit
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                            <i class="fas fa-calendar-times text-3xl mb-2"></i>
+                            <p class="text-lg">No bookings found</p>
+                            {% if search_query %}
+                            <p class="text-sm">Try a different search term</p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Status filter functionality
+    document.getElementById('statusFilter').addEventListener('change', function () {
+        const status = this.value;
+        const url = new URL(window.location.href);
+
+        if (status) {
+            url.searchParams.set('status', status);
+        } else {
+            url.searchParams.delete('status');
+        }
+
+        window.location.href = url.toString();
+    });
+
+    // Search form submit on Enter
+    document.querySelector('input[name="search"]').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            this.form.submit();
+        }
+    });
+</script>
+{% endblock %}
