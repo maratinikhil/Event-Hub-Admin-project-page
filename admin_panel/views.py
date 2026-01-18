@@ -6,10 +6,12 @@ from django.contrib.auth.views import LoginView
 from django.utils import timezone
 from datetime import date, timedelta
 from django.urls import reverse_lazy
+from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Count, Sum, Q, Avg
 from .models import Event, BookingsEvent, Movie, User
 from .forms import EventForm, MovieForm
+import uuid
 
 # Custom login view to add messages
 class AdminLoginView(LoginView):
@@ -39,7 +41,6 @@ def admin_logout(request):
 # Dashboard view (with login required)
 @login_required(login_url='/admin-panel/login/')
 def dashboard(request):
-    """Admin dashboard homepage"""
     # Get event stats
     total_events = Event.objects.count() if hasattr(Event, 'objects') else 0
     upcoming_events = Event.objects.filter(date__gte=timezone.now().date()).count() if hasattr(Event, 'objects') else 0
@@ -94,7 +95,7 @@ def admin_event_bookings(request):
         'search_query': search_query,
         'page_title': 'Event Bookings',
     }
-    return render(request, 'admin_panel/events/bookings_list.html', context)
+    return render(request, 'admin_panel/events/event_book_list.html', context)
 
 @login_required(login_url='/admin-panel/login/')
 def admin_event_booking_detail(request, booking_id):
@@ -161,12 +162,17 @@ def admin_events_list(request):
     }
     return render(request, 'admin_panel/events/events.html', context)
 
+
 @login_required(login_url='/admin-panel/login/')
 def admin_event_detail(request, event_id):
     """Custom admin view for event details"""
-    event = get_object_or_404(Event.objects.annotate(
-        booking_count=Count('bookingsevent')
-    ), id=event_id)
+    try:
+        event = Event.objects.annotate(
+            booking_count=Count('bookingsevent')
+        ).get(id=event_id)
+    except Event.DoesNotExist:
+        messages.error(request, 'Event not found!')
+        return redirect('admin_events_list')
     
     # Get bookings for this event
     bookings = BookingsEvent.objects.filter(event=event).select_related('user').order_by('-booking_date')
@@ -174,7 +180,27 @@ def admin_event_detail(request, event_id):
     # Calculate stats
     total_bookings = bookings.count()
     total_revenue = bookings.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
-    available_seats = event.capacity - total_bookings if event.capacity else 0
+    
+    # Calculate booked seats by summing up all tickets from confirmed bookings
+    # Only count confirmed bookings (not pending or cancelled)
+    confirmed_bookings = bookings.filter(status='confirmed')
+    booked_seats = confirmed_bookings.aggregate(total_tickets=Sum('number_of_tickets'))['total_tickets'] or 0
+    
+    # Calculate available seats
+    if event.total_seats is not None:
+        available_seats = max(0, event.total_seats - booked_seats)
+        
+        # Calculate booking percentage
+        if event.total_seats > 0:
+            booking_percentage = (booked_seats / event.total_seats) * 100
+        else:
+            booking_percentage = 0
+    else:
+        available_seats = event.available_seats or 0
+        booking_percentage = 0
+    
+    # Check if event is sold out
+    is_sold_out = available_seats <= 0
     
     context = {
         'event': event,
@@ -182,6 +208,9 @@ def admin_event_detail(request, event_id):
         'total_bookings': total_bookings,
         'total_revenue': total_revenue,
         'available_seats': available_seats,
+        'booked_seats': booked_seats,  # Add this to context
+        'booking_percentage': booking_percentage,  # Add this to context
+        'is_sold_out': is_sold_out,  # Add this to context
         'today': date.today(),
         'page_title': f'Event: {event.name}',
     }
@@ -214,6 +243,7 @@ def create_event(request):
         'avg_price': avg_price,
         'avg_seats': avg_seats,
         'page_title': 'Create Event',
+        'event': None, 
     }
     return render(request, 'admin_panel/events/create_event.html', context)
 
@@ -237,6 +267,160 @@ def edit_event(request, event_id):
         'page_title': f'Edit Event: {event.name}',
     }
     return render(request, 'admin_panel/events/create_event.html', context)
+
+
+
+def generate_booking_id():
+    """Generate a unique booking ID matching the model's format"""
+    while True:
+        booking_id = f"EVT{uuid.uuid4().hex[:8].upper()}"
+        if not BookingsEvent.objects.filter(booking_id=booking_id).exists():
+            return booking_id
+
+
+
+@login_required
+def event_book(request):
+    events = Event.objects.filter(
+        date__gte=timezone.now().date()  
+    ).order_by('date', 'time')
+    context = {
+        'events': events,
+        'current_date': timezone.now(),
+    }
+    return render(request, 'admin_panel/events/event_book.html', context)
+
+
+
+@login_required
+def event_book_add(request):
+    """Handle the event booking form submission"""
+    if request.method == 'POST':
+        try:
+            # Get form data
+            event_id = request.POST.get('event')
+            number_of_tickets = int(request.POST.get('number_of_tickets', 1))
+            status = request.POST.get('status')
+            payment_status = request.POST.get('payment_status') == 'on'
+            customer_name = request.POST.get('customer_name')
+            customer_email = request.POST.get('customer_email')
+            customer_phone = request.POST.get('customer_phone', '')
+            special_request = request.POST.get('special_request', '')
+            
+            # Validate required fields
+            if not event_id or not status or not customer_name or not customer_email:
+                messages.error(request, 'Please fill all required fields.')
+                return redirect('event_book')
+            
+            # Get the event
+            event = get_object_or_404(Event, id=event_id)
+            
+            # Check if enough seats are available
+            if event.available_seats < number_of_tickets:
+                messages.error(request, f'Only {event.available_seats} seats available for this event.')
+                return redirect('event_book')
+            
+            # Calculate total amount
+            total_amount = event.ticket_price * number_of_tickets
+            
+            # Generate unique booking ID
+            booking_id = generate_booking_id()
+            
+            # Create booking WITHOUT user assignment for now
+            booking = BookingsEvent.objects.create(
+                event=event,
+                # user=None,  # Leave it as None for now
+                number_of_tickets=number_of_tickets,
+                total_amount=total_amount,
+                status=status,
+                booking_id=booking_id,
+                customer_name=customer_name,
+                customer_email=customer_email,
+                customer_phone=customer_phone,
+                special_request=special_request,
+                payment_status=payment_status
+            )
+            
+            messages.success(request, f'Booking {booking.booking_id} created successfully!')
+            
+            # Handle different save actions
+            if 'save_and_add' in request.POST:
+                return redirect('event_book')
+            elif 'save_and_continue' in request.POST:
+                return redirect('event_book')
+            else:
+                return redirect('event_bookings_list')
+                
+        except Event.DoesNotExist:
+            messages.error(request, 'Selected event does not exist.')
+            return redirect('event_book')
+        except ValueError as e:
+            messages.error(request, f'Invalid input: {str(e)}')
+            return redirect('event_book')
+        except Exception as e:
+            messages.error(request, f'Error creating booking: {str(e)}')
+            return redirect('event_book')
+    
+    return redirect('event_book')
+@login_required
+def event_bookings_list(request):
+    """Display list of all event bookings"""
+    bookings = BookingsEvent.objects.select_related('event', 'user').all()
+    
+    # Filter by status if provided
+    status_filter = request.GET.get('status')
+    if status_filter:
+        bookings = bookings.filter(status=status_filter)
+    
+    # Filter by payment status if provided
+    payment_filter = request.GET.get('payment_status')
+    if payment_filter == 'paid':
+        bookings = bookings.filter(payment_status=True)
+    elif payment_filter == 'unpaid':
+        bookings = bookings.filter(payment_status=False)
+    
+    # Search by booking ID or customer name
+    search_query = request.GET.get('search')
+    if search_query:
+        bookings = bookings.filter(
+            models.Q(booking_id__icontains=search_query) |
+            models.Q(customer_name__icontains=search_query) |
+            models.Q(customer_email__icontains=search_query)
+        )
+    
+    context = {
+        'bookings': bookings,
+        'status_choices': BookingsEvent.STATUS_CHOICES,
+    }
+    return render(request, 'event_bookings_list.html', context)
+
+@login_required
+def event_booking_detail(request, booking_id):
+    """Display details of a specific booking"""
+    booking = get_object_or_404(BookingsEvent, booking_id=booking_id)
+    
+    context = {
+        'booking': booking,
+    }
+    return render(request, 'event_booking_detail.html', context)
+
+@login_required
+def event_booking_cancel(request, booking_id):
+    """Cancel a booking"""
+    if request.method == 'POST':
+        booking = get_object_or_404(BookingsEvent, booking_id=booking_id)
+        
+        if booking.status == 'cancelled':
+            messages.warning(request, 'Booking is already cancelled.')
+        else:
+            booking.status = 'cancelled'
+            booking.save()
+            messages.success(request, f'Booking {booking.booking_id} has been cancelled.')
+        
+        return redirect('event_bookings_list')
+    
+    return redirect('event_bookings_list')
+
 
 # ========= OTHER VIEWS =========
 

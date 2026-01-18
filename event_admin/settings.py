@@ -146,8 +146,12 @@ STATICFILES_DIRS=[
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+EVENT_PROJECT_MEDIA = 'D:/gitproject/eventproject/media/'
 
 MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = EVENT_PROJECT_MEDIA
+print(f"Admin using Event Project Media: {MEDIA_ROOT}")
 
 sys.path.insert(0, r'D:\gitproject\eventproject') 
 

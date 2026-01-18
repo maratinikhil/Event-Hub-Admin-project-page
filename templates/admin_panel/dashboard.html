@@ -1,4 +1,3 @@
-<!-- admin_panel/templates/admin_panel/dashboard.html -->
 {% extends 'admin_panel/base.html' %}
 {% load humanize %}
 {% load static %}
@@ -9,104 +8,89 @@
 <style>
     .stat-card {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border-radius: 12px;
+        background: rgba(30, 41, 59, 0.4);
+        /* slate-800 with opacity */
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        transform: translateY(-4px);
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
     }
 
-    .welcome-gradient {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    .glass-panel {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .glass-effect {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-    }
-
-    .pulse-dot {
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
+    /* Pulse animation for Live Badge */
+    @keyframes live-pulse {
         0% {
-            opacity: 1;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
         }
 
-        50% {
-            opacity: 0.5;
+        70% {
+            box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
         }
 
         100% {
-            opacity: 1;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
         }
     }
 
     .live-badge {
-        animation: live-pulse 1.5s infinite;
-    }
-
-    @keyframes live-pulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-        }
-
-        70% {
-            box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
-        }
-
-        100% {
-            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
-        }
+        animation: live-pulse 2s infinite;
     }
 
     .refresh-spin {
-        transition: transform 0.3s;
+        transition: transform 0.5s ease;
     }
 
-    .refresh-spin:active {
-        transform: rotate(180deg);
+    /* Custom Scrollbar for inner lists */
+    .inner-scroll::-webkit-scrollbar {
+        width: 4px;
     }
-    
-    /* Adjust for sidebar */
-    @media (max-width: 767px) {
-        .stat-card {
-            border-radius: 10px;
-        }
+
+    .inner-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .inner-scroll::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 2px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Real-time Header Bar -->
-<div class="mb-6">
+<div class="mb-8 animate-fade-in-down">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
-            <div class="flex items-center mt-1">
-                <div class="flex items-center mr-4">
+            <h1 class="text-3xl font-bold text-white tracking-tight">Dashboard Overview</h1>
+            <div class="flex items-center mt-2 gap-3">
+                <div
+                    class="flex items-center px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 live-badge">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></span>
-                    <span class="text-sm text-gray-600">Live Updates</span>
-                    <span class="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-medium rounded-full live-badge">
-                        LIVE
-                    </span>
+                    <span class="text-xs font-bold text-emerald-400 tracking-wider">SYSTEM LIVE</span>
                 </div>
-                <span class="text-sm text-gray-500" id="current-date-time">
-                    Loading...
+                <span class="text-sm text-slate-400 font-mono" id="current-date-time">
+                    Initializing...
                 </span>
             </div>
         </div>
 
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center gap-3">
             <button onclick="refreshDashboard()"
-                class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                <i class="fas fa-sync-alt mr-2 refresh-spin"></i>
-                Refresh Data
+                class="group flex items-center px-4 py-2.5 text-sm font-medium text-slate-300 bg-slate-800/50 border border-white/5 rounded-xl hover:bg-slate-700/50 hover:text-white transition-all duration-200 hover:border-white/10">
+                <i class="fas fa-sync-alt mr-2 text-slate-400 group-hover:text-white refresh-spin"></i>
+                Refresh
             </button>
             <a href="/admin-panel/create/event/"
-                class="flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm">
+                class="flex items-center px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/20 transition-all duration-200 transform hover:scale-[1.02]">
                 <i class="fas fa-plus mr-2"></i>
                 New Event
             </a>
@@ -114,415 +98,385 @@
     </div>
 </div>
 
-<!-- Main Statistics Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <!-- Total Events -->
-    <div class="stat-card bg-white rounded-xl border border-gray-200 p-5 hover:border-blue-300">
-        <div class="flex items-start justify-between">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+    <div class="stat-card rounded-2xl p-6 relative overflow-hidden group">
+        <div
+            class="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/20 rounded-full blur-2xl group-hover:bg-blue-500/30 transition-all duration-500">
+        </div>
+
+        <div class="flex justify-between items-start relative z-10">
             <div>
-                <p class="text-gray-500 text-sm font-medium mb-1">Total Events</p>
-                <h3 class="text-3xl font-bold text-gray-800 mb-2" id="total-events">
-                    {% if dashboard_stats.total_events %}
-                        {{ dashboard_stats.total_events|intcomma }}
-                    {% else %}
-                        0
-                    {% endif %}
+                <p class="text-slate-400 text-sm font-medium mb-1">Total Events</p>
+                <h3 class="text-3xl font-bold text-white mb-2 tracking-tight" id="total-events">
+                    {{ dashboard_stats.total_events|default:"0"|intcomma }}
                 </h3>
-                <div class="flex items-center">
-                    <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-md mr-2">
-                        <i class="fas fa-calendar-check mr-1"></i>
-                        <span id="active-events">
-                            {% if dashboard_stats.active_events %}
-                                {{ dashboard_stats.active_events|intcomma }}
-                            {% else %}
-                                0
-                            {% endif %}
-                        </span> active
+                <div class="flex items-center gap-2">
+                    <span
+                        class="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-xs font-bold rounded border border-blue-500/20">
+                        {{ dashboard_stats.active_events|default:"0"|intcomma }} Active
                     </span>
-                    <span class="text-green-600 text-sm font-medium">
-                        <i class="fas fa-arrow-up mr-1"></i>
-                        <span id="events-growth">
-                            {% if dashboard_stats.events_growth %}
-                                {{ dashboard_stats.events_growth }}%
-                            {% else %}
-                                12%
-                            {% endif %}
-                        </span>
+                    <span class="text-emerald-400 text-xs font-medium flex items-center">
+                        <i class="fas fa-arrow-up text-[10px] mr-1"></i> {{ dashboard_stats.events_growth|default:"12" }}%
                     </span>
                 </div>
             </div>
-            <div class="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center">
-                <i class="fas fa-calendar-alt text-blue-600 text-xl"></i>
+            <div
+                class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fas fa-calendar-alt text-blue-400 text-xl"></i>
             </div>
         </div>
-        <div class="mt-4 pt-4 border-t border-gray-100">
-            <p class="text-xs text-gray-500">
-                <i class="fas fa-clock mr-1"></i>
-                <span id="events-today">
-                    {% if dashboard_stats.events_today %}
-                        {{ dashboard_stats.events_today }}
-                    {% else %}
-                        8
-                    {% endif %}
-                </span> scheduled today
+        <div class="mt-4 pt-4 border-t border-white/5">
+            <p class="text-xs text-slate-500">
+                <i class="fas fa-clock mr-1 text-slate-600"></i>
+                <span class="text-slate-300">{{ dashboard_stats.events_today|default:"8" }}</span> scheduled today
             </p>
         </div>
     </div>
 
-    <!-- Total Revenue -->
-    <div class="stat-card bg-white rounded-xl border border-gray-200 p-5 hover:border-emerald-300">
-        <div class="flex items-start justify-between">
+    <div class="stat-card rounded-2xl p-6 relative overflow-hidden group">
+        <div
+            class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/20 rounded-full blur-2xl group-hover:bg-emerald-500/30 transition-all duration-500">
+        </div>
+
+        <div class="flex justify-between items-start relative z-10">
             <div>
-                <p class="text-gray-500 text-sm font-medium mb-1">Total Revenue</p>
-                <h3 class="text-3xl font-bold text-gray-800 mb-2" id="total-revenue">
-                    {% if dashboard_stats.event_revenue %}
-                        ₹{{ dashboard_stats.event_revenue|intcomma }}
-                    {% else %}
-                        ₹0
-                    {% endif %}
+                <p class="text-slate-400 text-sm font-medium mb-1">Total Revenue</p>
+                <h3 class="text-3xl font-bold text-white mb-2 tracking-tight" id="total-revenue">
+                    ₹{{ dashboard_stats.event_revenue|default:"0"|intcomma }}
                 </h3>
-                <div class="flex items-center">
-                    <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-md mr-2">
-                        <i class="fas fa-rupee-sign mr-1"></i>
+                <div class="flex items-center gap-2">
+                    <span
+                        class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-xs font-bold rounded border border-emerald-500/20">
                         All time
                     </span>
-                    <span class="text-green-600 text-sm font-medium">
-                        <i class="fas fa-arrow-up mr-1"></i>
-                        <span id="revenue-growth">
-                            {% if dashboard_stats.revenue_growth %}
-                                {{ dashboard_stats.revenue_growth }}%
-                            {% else %}
-                                24%
-                            {% endif %}
-                        </span>
+                    <span class="text-emerald-400 text-xs font-medium flex items-center">
+                        <i class="fas fa-arrow-up text-[10px] mr-1"></i> {{ dashboard_stats.revenue_growth|default:"24" }}%
                     </span>
                 </div>
             </div>
-            <div class="w-12 h-12 rounded-lg bg-emerald-50 flex items-center justify-center">
-                <i class="fas fa-wallet text-emerald-600 text-xl"></i>
+            <div
+                class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fas fa-wallet text-emerald-400 text-xl"></i>
             </div>
         </div>
-        <div class="mt-4 pt-4 border-t border-gray-100">
-            <p class="text-xs text-gray-500">
-                <i class="fas fa-calendar-day mr-1"></i>
-                <span id="revenue-today">
-                    {% if dashboard_stats.revenue_today %}
-                        ₹{{ dashboard_stats.revenue_today }}
-                    {% else %}
-                        ₹12.5k
-                    {% endif %}
-                </span> today
+        <div class="mt-4 pt-4 border-t border-white/5">
+            <p class="text-xs text-slate-500">
+                <i class="fas fa-chart-line mr-1 text-slate-600"></i>
+                <span class="text-slate-300">₹{{ dashboard_stats.revenue_today|default:"12.5k" }}</span> today
             </p>
         </div>
     </div>
 
-    <!-- Total Bookings -->
-    <div class="stat-card bg-white rounded-xl border border-gray-200 p-5 hover:border-purple-300">
-        <div class="flex items-start justify-between">
+    <div class="stat-card rounded-2xl p-6 relative overflow-hidden group">
+        <div
+            class="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/20 rounded-full blur-2xl group-hover:bg-purple-500/30 transition-all duration-500">
+        </div>
+
+        <div class="flex justify-between items-start relative z-10">
             <div>
-                <p class="text-gray-500 text-sm font-medium mb-1">Total Bookings</p>
-                <h3 class="text-3xl font-bold text-gray-800 mb-2" id="total-bookings">
-                    {% if dashboard_stats.total_event_bookings %}
-                        {{ dashboard_stats.total_event_bookings|intcomma }}
-                    {% else %}
-                        0
-                    {% endif %}
+                <p class="text-slate-400 text-sm font-medium mb-1">Total Bookings</p>
+                <h3 class="text-3xl font-bold text-white mb-2 tracking-tight" id="total-bookings">
+                    {{ dashboard_stats.total_event_bookings|default:"0"|intcomma }}
                 </h3>
-                <div class="flex items-center">
-                    <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-md mr-2">
-                        <i class="fas fa-ticket-alt mr-1"></i>
-                        Events & Movies
+                <div class="flex items-center gap-2">
+                    <span
+                        class="px-2 py-0.5 bg-purple-500/10 text-purple-400 text-xs font-bold rounded border border-purple-500/20">
+                        Events
                     </span>
-                    <span class="text-green-600 text-sm font-medium">
-                        <i class="fas fa-arrow-up mr-1"></i>
-                        <span id="bookings-growth">
-                            {% if dashboard_stats.bookings_growth %}
-                                {{ dashboard_stats.bookings_growth }}%
-                            {% else %}
-                                18%
-                            {% endif %}
-                        </span>
+                    <span class="text-emerald-400 text-xs font-medium flex items-center">
+                        <i class="fas fa-arrow-up text-[10px] mr-1"></i> {{ dashboard_stats.bookings_growth|default:"18" }}%
                     </span>
                 </div>
             </div>
-            <div class="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center">
-                <i class="fas fa-ticket-alt text-purple-600 text-xl"></i>
+            <div
+                class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fas fa-ticket-alt text-purple-400 text-xl"></i>
             </div>
         </div>
-        <div class="mt-4 pt-4 border-t border-gray-100">
-            <p class="text-xs text-gray-500">
-                <i class="fas fa-hourglass-half mr-1"></i>
-                <span id="pending-actions">
-                    {% if dashboard_stats.pending_actions %}
-                        {{ dashboard_stats.pending_actions }}
-                    {% else %}
-                        12
-                    {% endif %}
-                </span> pending actions
+        <div class="mt-4 pt-4 border-t border-white/5">
+            <p class="text-xs text-slate-500">
+                <i class="fas fa-hourglass-half mr-1 text-slate-600"></i>
+                <span class="text-slate-300">{{ dashboard_stats.pending_actions|default:"12" }}</span> pending
             </p>
         </div>
     </div>
 
-    <!-- Total Users -->
-    <div class="stat-card bg-white rounded-xl border border-gray-200 p-5 hover:border-orange-300">
-        <div class="flex items-start justify-between">
+    <div class="stat-card rounded-2xl p-6 relative overflow-hidden group">
+        <div
+            class="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/20 rounded-full blur-2xl group-hover:bg-amber-500/30 transition-all duration-500">
+        </div>
+
+        <div class="flex justify-between items-start relative z-10">
             <div>
-                <p class="text-gray-500 text-sm font-medium mb-1">Total Users</p>
-                <h3 class="text-3xl font-bold text-gray-800 mb-2" id="total-users">
-                    {% if dashboard_stats.total_users %}
-                        {{ dashboard_stats.total_users|intcomma }}
-                    {% else %}
-                        0
-                    {% endif %}
+                <p class="text-slate-400 text-sm font-medium mb-1">Total Users</p>
+                <h3 class="text-3xl font-bold text-white mb-2 tracking-tight" id="total-users">
+                    {{ dashboard_stats.total_users|default:"0"|intcomma }}
                 </h3>
-                <div class="flex items-center">
-                    <span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-md mr-2">
-                        <i class="fas fa-user-plus mr-1"></i>
-                        <span id="new-users-today">
-                            {% if dashboard_stats.new_users_today %}
-                                {{ dashboard_stats.new_users_today|intcomma }}
-                            {% else %}
-                                0
-                            {% endif %}
-                        </span> today
+                <div class="flex items-center gap-2">
+                    <span
+                        class="px-2 py-0.5 bg-amber-500/10 text-amber-400 text-xs font-bold rounded border border-amber-500/20">
+                        {{ dashboard_stats.new_users_today|default:"0"|intcomma }} New
                     </span>
-                    <span class="text-green-600 text-sm font-medium">
-                        <i class="fas fa-arrow-up mr-1"></i>
-                        <span id="users-growth">
-                            {% if dashboard_stats.users_growth %}
-                                {{ dashboard_stats.users_growth }}%
-                            {% else %}
-                                8%
-                            {% endif %}
-                        </span>
+                    <span class="text-emerald-400 text-xs font-medium flex items-center">
+                        <i class="fas fa-arrow-up text-[10px] mr-1"></i> {{ dashboard_stats.users_growth|default:"8" }}%
                     </span>
                 </div>
             </div>
-            <div class="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center">
-                <i class="fas fa-users text-orange-600 text-xl"></i>
+            <div
+                class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/10 to-amber-600/10 border border-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fas fa-users text-amber-400 text-xl"></i>
             </div>
         </div>
-        <div class="mt-4 pt-4 border-t border-gray-100">
-            <p class="text-xs text-gray-500">
-                <i class="fas fa-chart-line mr-1"></i>
-                <span id="active-users">
-                    {% if dashboard_stats.active_users %}
-                        {{ dashboard_stats.active_users }}
-                    {% else %}
-                        243
-                    {% endif %}
-                </span> active now
+        <div class="mt-4 pt-4 border-t border-white/5">
+            <p class="text-xs text-slate-500">
+                <i class="fas fa-signal mr-1 text-slate-600"></i>
+                <span class="text-slate-300">{{ dashboard_stats.active_users|default:"243" }}</span> online
             </p>
         </div>
     </div>
 </div>
 
-<!-- Charts and Activity Section -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-    <!-- Revenue Chart -->
-    <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6">
+
+    <div class="lg:col-span-2 glass-panel rounded-2xl p-6">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h3 class="text-lg font-semibold text-gray-800">Revenue Overview</h3>
-                <p class="text-sm text-gray-500">Last 7 days performance</p>
+                <h3 class="text-lg font-bold text-white">Revenue Overview</h3>
+                <p class="text-sm text-slate-400">Financial performance</p>
             </div>
-            <select class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white">
+            <select
+                class="text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500">
                 <option>Last 7 days</option>
                 <option>Last 30 days</option>
                 <option>This month</option>
             </select>
         </div>
-        <div class="h-64 flex items-center justify-center">
-            <!-- Placeholder for Chart -->
+        <div
+            class="h-72 flex items-center justify-center border-2 border-dashed border-slate-700/50 rounded-xl bg-slate-800/30">
             <div class="text-center">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 mb-4">
-                    <i class="fas fa-chart-bar text-blue-600 text-2xl"></i>
+                <div
+                    class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-800 border border-slate-700 mb-4 shadow-lg">
+                    <i class="fas fa-chart-area text-blue-500 text-2xl"></i>
                 </div>
-                <p class="text-gray-500 text-sm">Revenue chart will be displayed here</p>
-                <p class="text-gray-400 text-xs mt-1">Using Chart.js or similar library</p>
+                <p class="text-slate-400 text-sm font-medium">Revenue Data</p>
+                <p class="text-slate-600 text-xs mt-1">Connect Chart.js here</p>
             </div>
         </div>
     </div>
 
-    <!-- Recent Activity -->
-    <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <div class="glass-panel rounded-2xl p-6 flex flex-col">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h3 class="text-lg font-semibold text-gray-800">Recent Activity</h3>
-                <p class="text-sm text-gray-500">Live updates from system</p>
+                <h3 class="text-lg font-bold text-white">Activity Log</h3>
+                <p class="text-sm text-slate-400">Real-time updates</p>
             </div>
-            <button onclick="refreshActivity()" class="text-gray-500 hover:text-gray-700">
+            <button onclick="refreshActivity()"
+                class="p-2 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
                 <i class="fas fa-sync-alt text-sm"></i>
             </button>
         </div>
-        <div class="space-y-4" id="activity-feed">
+
+        <div class="space-y-4 overflow-y-auto inner-scroll flex-1 pr-2" id="activity-feed">
             {% if recent_activity %}
-                {% for activity in recent_activity|slice:":5" %}
-                <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                        <div class="w-8 h-8 rounded-full bg-{{ activity.color|default:'blue' }}-100 flex items-center justify-center">
-                            <i class="fas fa-{{ activity.icon|default:'bell' }} text-{{ activity.color|default:'blue' }}-600 text-sm"></i>
-                        </div>
+            {% for activity in recent_activity|slice:":5" %}
+            <div class="flex items-start group">
+                <div class="flex-shrink-0 relative">
+                    <div
+                        class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center group-hover:border-slate-600 transition-colors">
+                        <i
+                            class="fas fa-{{ activity.icon|default:'bell' }} text-{{ activity.color|default:'blue' }}-400 text-xs"></i>
                     </div>
-                    <div class="ml-3 flex-1">
-                        <p class="text-sm text-gray-800">{{ activity.message }}</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ activity.time|timesince }} ago</p>
+                    <div
+                        class="absolute inset-0 bg-{{ activity.color|default:'blue' }}-500/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity">
                     </div>
                 </div>
-                {% endfor %}
+                <div class="ml-3 flex-1 pt-1">
+                    <p class="text-sm text-slate-300 group-hover:text-white transition-colors">{{ activity.message }}
+                    </p>
+                    <p class="text-[10px] text-slate-500 mt-1 font-mono">{{ activity.time|timesince }} ago</p>
+                </div>
+            </div>
+            {% endfor %}
             {% else %}
-                <div class="text-center py-8">
-                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4">
-                        <i class="fas fa-history text-gray-400 text-lg"></i>
-                    </div>
-                    <p class="text-gray-500 text-sm">No recent activity</p>
+            <div class="text-center py-12">
+                <div
+                    class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-800/50 border border-slate-700 mb-3">
+                    <i class="fas fa-history text-slate-600"></i>
                 </div>
+                <p class="text-slate-500 text-sm">No recent activity</p>
+            </div>
             {% endif %}
         </div>
     </div>
 </div>
 
-<!-- Quick Stats & Upcoming Events -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-    <!-- Quick Stats -->
-    <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 text-white">
-        <h3 class="text-lg font-semibold mb-6">System Status</h3>
-        <div class="grid grid-cols-2 gap-4">
-            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+
+    <div
+        class="rounded-2xl p-6 bg-gradient-to-br from-slate-900 to-slate-800 border border-white/5 relative overflow-hidden">
+        <div
+            class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none">
+        </div>
+
+        <h3 class="text-lg font-bold text-white mb-6 relative z-10">System Health</h3>
+
+        <div class="grid grid-cols-2 gap-4 relative z-10">
+            <div class="bg-black/20 rounded-xl p-4 border border-white/5">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm text-gray-300">Server Uptime</span>
-                    <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded">99.8%</span>
+                    <span class="text-xs text-slate-400 uppercase tracking-wider">Uptime</span>
+                    <span
+                        class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">99.8%</span>
                 </div>
-                <div class="w-full bg-gray-700 rounded-full h-2">
-                    <div class="bg-emerald-500 h-2 rounded-full" style="width: 99.8%"></div>
+                <div class="w-full bg-slate-700/50 rounded-full h-1.5">
+                    <div class="bg-emerald-500 h-1.5 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+                        style="width: 99.8%"></div>
                 </div>
             </div>
 
-            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+            <div class="bg-black/20 rounded-xl p-4 border border-white/5">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm text-gray-300">Memory Usage</span>
-                    <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded">68%</span>
+                    <span class="text-xs text-slate-400 uppercase tracking-wider">Memory</span>
+                    <span
+                        class="text-xs bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded border border-blue-500/20">68%</span>
                 </div>
-                <div class="w-full bg-gray-700 rounded-full h-2">
-                    <div class="bg-blue-500 h-2 rounded-full" style="width: 68%"></div>
+                <div class="w-full bg-slate-700/50 rounded-full h-1.5">
+                    <div class="bg-blue-500 h-1.5 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                        style="width: 68%"></div>
                 </div>
             </div>
 
-            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm text-gray-300">Response Time</span>
-                    <span class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded">142ms</span>
+            <div class="bg-black/20 rounded-xl p-4 border border-white/5">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs text-slate-400 uppercase tracking-wider">Latency</span>
+                    <i class="fas fa-wifi text-emerald-500 text-xs"></i>
                 </div>
-                <div class="text-xl font-semibold">142ms</div>
+                <div class="text-xl font-bold text-white">42ms</div>
             </div>
 
-            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm text-gray-300">Active Sessions</span>
-                    <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded">48</span>
+            <div class="bg-black/20 rounded-xl p-4 border border-white/5">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs text-slate-400 uppercase tracking-wider">Sessions</span>
+                    <i class="fas fa-users text-purple-500 text-xs"></i>
                 </div>
-                <div class="text-xl font-semibold">48</div>
+                <div class="text-xl font-bold text-white">128</div>
             </div>
         </div>
     </div>
 
-    <!-- Upcoming Events -->
-    <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <div class="glass-panel rounded-2xl p-6">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h3 class="text-lg font-semibold text-gray-800">Upcoming Events</h3>
-                <p class="text-sm text-gray-500">Next 24 hours</p>
+                <h3 class="text-lg font-bold text-white">Upcoming Events</h3>
+                <p class="text-sm text-slate-400">Next 24 hours</p>
             </div>
-            <a href="/admin/eventapp/event/" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                View All
+            <a href="/admin/eventapp/event/"
+                class="text-xs font-bold text-blue-400 hover:text-blue-300 uppercase tracking-wider transition-colors">
+                View All <i class="fas fa-arrow-right ml-1"></i>
             </a>
         </div>
-        <div class="space-y-4" id="upcoming-events">
+        <div class="space-y-3" id="upcoming-events">
             {% if upcoming_events %}
-                {% for event in upcoming_events|slice:":3" %}
-                <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors duration-200">
-                    <div class="flex-shrink-0 w-10 h-10 bg-{{ event.category_color|default:'blue' }}-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-{{ event.icon|default:'calendar' }} text-{{ event.category_color|default:'blue' }}-600"></i>
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="text-sm font-medium text-gray-800">{{ event.title }}</h4>
-                        <div class="flex items-center text-xs text-gray-500 mt-1">
-                            <i class="far fa-clock mr-1"></i>
-                            {{ event.time }} • {{ event.venue }}
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-sm font-medium text-gray-800">{{ event.bookings }}</span>
-                        <p class="text-xs text-gray-500">bookings</p>
+            {% for event in upcoming_events|slice:":3" %}
+            <div
+                class="flex items-center p-3 rounded-xl bg-slate-800/30 hover:bg-slate-800/60 border border-transparent hover:border-slate-700 transition-all duration-200 group cursor-pointer">
+                <div
+                    class="flex-shrink-0 w-10 h-10 bg-{{ event.category_color|default:'blue' }}-500/10 rounded-lg flex items-center justify-center mr-4 border border-{{ event.category_color|default:'blue' }}-500/20 group-hover:scale-105 transition-transform">
+                    <i
+                        class="fas fa-{{ event.icon|default:'calendar' }} text-{{ event.category_color|default:'blue' }}-400"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-slate-200 group-hover:text-white truncate">{{ event.title }}
+                    </h4>
+                    <div class="flex items-center text-xs text-slate-500 mt-1">
+                        <i class="far fa-clock mr-1.5"></i>
+                        {{ event.time }} <span class="mx-1.5 text-slate-700">|</span> {{ event.venue }}
                     </div>
                 </div>
-                {% endfor %}
+                <div class="text-right pl-3">
+                    <span class="block text-sm font-bold text-white">{{ event.bookings }}</span>
+                    <span class="text-[10px] text-slate-500 uppercase">Booked</span>
+                </div>
+            </div>
+            {% endfor %}
             {% else %}
-                <div class="text-center py-8">
-                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4">
-                        <i class="far fa-calendar text-gray-400 text-lg"></i>
-                    </div>
-                    <p class="text-gray-500 text-sm">No upcoming events</p>
-                    <a href="/admin/eventapp/event/add/"
-                        class="text-blue-600 text-sm hover:text-blue-700 mt-2 inline-block">
-                        Create your first event
-                    </a>
+            <div class="text-center py-8">
+                <div
+                    class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-800/50 border border-slate-700 mb-4">
+                    <i class="far fa-calendar-times text-slate-500"></i>
                 </div>
+                <p class="text-slate-400 text-sm">No upcoming events</p>
+                <a href="/admin/eventapp/event/add/"
+                    class="text-blue-400 text-xs hover:text-blue-300 mt-2 inline-block font-medium">
+                    Schedule an event &rarr;
+                </a>
+            </div>
             {% endif %}
         </div>
     </div>
 </div>
 
-<!-- Recent Bookings Table -->
-<div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-8">
-    <div class="p-6 border-b border-gray-200">
-        <div class="flex items-center justify-between">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-800">Recent Bookings</h3>
-                <p class="text-sm text-gray-500">Latest transactions and reservations</p>
-            </div>
-            <a href="/admin/eventapp/booking/" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                View All Bookings
-            </a>
+<div class="glass-panel rounded-2xl overflow-hidden mb-8">
+    <div class="p-6 border-b border-white/5 flex items-center justify-between bg-slate-800/30">
+        <div>
+            <h3 class="text-lg font-bold text-white">Recent Bookings</h3>
+            <p class="text-sm text-slate-400">Latest transactions</p>
         </div>
+        <a href="/admin/eventapp/booking/"
+            class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg transition-colors border border-white/5">
+            Full Report
+        </a>
     </div>
     <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+        <table class="min-w-full text-left">
+            <thead class="bg-slate-900/50 border-b border-white/5">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Event</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Customer</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Amount</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Date</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200" id="recent-bookings">
+            <tbody class="divide-y divide-white/5" id="recent-bookings">
                 {% if recent_bookings %}
-                    {% for booking in recent_bookings|slice:":5" %}
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ booking.id|default:"N/A" }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ booking.event_name|default:"Unknown Event" }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ booking.customer_name|default:"Unknown Customer" }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">₹{{ booking.amount|default:"0" }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 text-xs font-medium rounded-full 
-                                {% if booking.status == 'confirmed' %}bg-green-100 text-green-800
-                                {% elif booking.status == 'pending' %}bg-yellow-100 text-yellow-800
-                                {% else %}bg-gray-100 text-gray-800{% endif %}">
-                                {{ booking.status|default:"Unknown"|title }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ booking.date|date:"M d, H:i"|default:"N/A" }}</td>
-                    </tr>
-                    {% endfor %}
+                {% for booking in recent_bookings|slice:":5" %}
+                <tr class="hover:bg-white/5 transition-colors group">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-slate-500 group-hover:text-blue-400">
+                        #{{ booking.id|default:"000" }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-200">{{
+                        booking.event_name|default:"Unknown" }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                        <div class="flex items-center gap-2">
+                            <div
+                                class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-[10px] text-white font-bold">
+                                {{ booking.customer_name|default:"U"|slice:":1" }}
+                            </div>
+                            {{ booking.customer_name|default:"Guest" }}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-white">₹{{ booking.amount|default:"0"
+                        }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2.5 py-1 text-[10px] font-bold uppercase rounded-full border 
+                                {% if booking.status == 'confirmed' %}bg-emerald-500/10 text-emerald-400 border-emerald-500/20
+                                {% elif booking.status == 'pending' %}bg-amber-500/10 text-amber-400 border-amber-500/20
+                                {% else %}bg-slate-700/30 text-slate-400 border-slate-600/30{% endif %}">
+                            {{ booking.status|default:"Draft" }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{{ booking.date|date:"M d,
+                        H:i"|default:"-" }}</td>
+                </tr>
+                {% endfor %}
                 {% else %}
-                    <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-gray-500">
-                            No recent bookings found
-                        </td>
-                    </tr>
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-slate-500">
+                        <i class="far fa-folder-open text-2xl mb-2 opacity-50"></i>
+                        <p>No bookings found</p>
+                    </td>
+                </tr>
                 {% endif %}
             </tbody>
         </table>
@@ -531,109 +485,66 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Live Clock Update
+        // --- Live Clock ---
         function updateLiveClock() {
             const now = new Date();
-            const date = now.toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-            const time = now.toLocaleTimeString('en-US', {
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-
-            const dateTimeElement = document.getElementById('current-date-time');
-            if (dateTimeElement) {
-                dateTimeElement.textContent = `${date} • ${time}`;
-            }
+            const date = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            const time = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const el = document.getElementById('current-date-time');
+            if (el) el.textContent = `${date} • ${time}`;
         }
-
-        // Update clock every second
-        updateLiveClock();
         setInterval(updateLiveClock, 1000);
+        updateLiveClock();
 
-        // Refresh dashboard data
-        window.refreshDashboard = function () {
-            const refreshBtn = document.querySelector('[onclick="refreshDashboard()"] i');
-            refreshBtn.classList.add('fa-spin');
+        // --- Custom Dark Notification Toast ---
+        window.showNotification = function (message, type = 'info') {
+            const colors = {
+                success: 'border-emerald-500 text-emerald-400',
+                error: 'border-red-500 text-red-400',
+                info: 'border-blue-500 text-blue-400'
+            };
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle'
+            };
 
-            // Simulate API call
+            const toast = document.createElement('div');
+            toast.className = `fixed top-24 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-900/90 backdrop-blur-md border-l-4 shadow-2xl shadow-black/50 transform transition-all duration-300 translate-x-full ${colors[type]}`;
+            toast.innerHTML = `
+                <i class="fas ${icons[type]} text-lg"></i>
+                <span class="text-sm font-medium text-slate-200">${message}</span>
+            `;
+
+            document.body.appendChild(toast);
+
+            // Animate in
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-x-full');
+            });
+
+            // Remove
             setTimeout(() => {
-                refreshBtn.classList.remove('fa-spin');
-                showNotification('Dashboard data refreshed successfully', 'success');
-            }, 1500);
-        };
-
-        // Refresh activity feed
-        window.refreshActivity = function () {
-            const refreshBtn = document.querySelector('[onclick="refreshActivity()"] i');
-            refreshBtn.classList.add('fa-spin');
-
-            setTimeout(() => {
-                refreshBtn.classList.remove('fa-spin');
-                showNotification('Activity feed updated', 'info');
-            }, 1000);
-        };
-
-        // Notification function
-        function showNotification(message, type = 'info') {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg transform transition-all duration-300 ${type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' :
-                    type === 'error' ? 'bg-red-100 text-red-800 border border-red-200' :
-                        'bg-blue-100 text-blue-800 border border-blue-200'
-                }`;
-            notification.innerHTML = `
-            <div class="flex items-center">
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} mr-2"></i>
-                <span>${message}</span>
-            </div>
-        `;
-
-            // Add to DOM
-            document.body.appendChild(notification);
-
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => notification.remove(), 300);
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
             }, 3000);
-        }
+        };
 
-        // Auto-refresh stats every 30 seconds
-        setInterval(() => {
-            const liveBadge = document.querySelector('.live-badge');
-            if (liveBadge) {
-                liveBadge.style.animation = 'none';
-                setTimeout(() => {
-                    liveBadge.style.animation = 'live-pulse 1.5s infinite';
-                }, 50);
-            }
-        }, 30000);
+        // --- Refresh Actions ---
+        window.refreshDashboard = function () {
+            const icon = document.querySelector('.refresh-spin');
+            icon.style.transform = 'rotate(180deg)';
 
-        // Add hover effects to cards
-        document.querySelectorAll('.stat-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
-            });
+            // Simulate fetch
+            setTimeout(() => {
+                icon.style.transform = 'rotate(0deg)';
+                showNotification('Dashboard updated', 'success');
+            }, 800);
+        };
 
-            card.addEventListener('mouseleave', () => {
-                card.style.boxShadow = '';
-            });
-        });
-        
-        // Debug: Check if context variables are available
-        console.log('Dashboard context:', {
-            dashboard_stats: {% if dashboard_stats %}{{ dashboard_stats|safe }}{% else %}null{% endif %},
-            recent_activity: {% if recent_activity %}{{ recent_activity|length }}{% else %}0{% endif %} items,
-            upcoming_events: {% if upcoming_events %}{{ upcoming_events|length }}{% else %}0{% endif %} items,
-            recent_bookings: {% if recent_bookings %}{{ recent_bookings|length }}{% else %}0{% endif %} items
-        });
+        window.refreshActivity = function () {
+            showNotification('Checking for new activity...', 'info');
+        };
     });
 </script>
 {% endblock %}

@@ -27,6 +27,10 @@
 
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
+
+
 
 urlpatterns = [
     # Dashboard and Auth
@@ -48,8 +52,17 @@ urlpatterns = [
     path('events/<int:event_id>/', views.admin_event_detail, name='admin_event_detail'),
     path('events/<int:event_id>/edit/', views.edit_event, name='edit_event'),
     path('events/reports/', views.event_report, name='event_report'),
+
+    path('event/book/', views.event_book, name='event_book'),
+    path('event/book/add/', views.event_book_add, name='event_book_add'),
+    path('event/bookings/', views.event_bookings_list, name='event_bookings_list'),
+    path('event/booking/<str:booking_id>/', views.event_booking_detail, name='event_booking_detail'),
+    path('event/booking/<str:booking_id>/cancel/', views.event_booking_cancel, name='event_booking_cancel'),
     
     # Other views
     path('movies/create/', views.create_movie, name='create_movie'),
     path('concerts/create/', views.create_concert, name='create_concert'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

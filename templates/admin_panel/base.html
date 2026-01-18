@@ -1,4 +1,3 @@
-<!-- admin_panel/templates/admin_panel/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,170 +5,225 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}EventAdmin Dashboard{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     {% load static %}
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        .sidebar-link.active {
-            background-color: #3b82f6;
-            color: white;
+        body {
+            background-color: #0f172a;
+            /* Slate 900 */
+            color: #e2e8f0;
+            /* Slate 200 */
         }
 
-        .sidebar-link.active:hover {
-            background-color: #2563eb;
+        /* Ambient Background */
+        .ambient-light {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            transition: transform 0.3s ease;
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: blob 15s infinite alternate;
         }
 
-        .chart-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .orb-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: #0f766e;
         }
 
-        /* Custom scrollbar */
+        .orb-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: #0ea5e9;
+            animation-delay: 2s;
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0px, 0px) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+
+            100% {
+                transform: translate(0px, 0px) scale(1);
+            }
+        }
+
+        /* Glass Sidebar Styling */
+        .glass-sidebar {
+            background: rgba(15, 23, 42, 0.95);
+            /* Slightly darker for legibility */
+            backdrop-filter: blur(16px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
+            height: 6px;
         }
 
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: rgba(15, 23, 42, 0.5);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 3px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-
-        /* Content adjustment for sidebar */
-        .main-content-wrapper {
-            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 100%;
-        }
-
-        @media (min-width: 768px) {
-            .main-content-wrapper.sidebar-open {
-                margin-left: 256px;
-                width: calc(100% - 256px);
-            }
-
-            .main-content-wrapper.sidebar-closed {
-                margin-left: 0;
-                width: 100%;
-            }
+            background: rgba(148, 163, 184, 0.5);
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 
-<body class="bg-gray-50 font-inter overflow-hidden">
-    <!-- Main Container -->
-    <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar -->
-        {% include 'admin_panel/sidebar.html' %}
+<body class="antialiased font-sans relative">
 
-        <!-- Main Content -->
-        <div id="mainContent" class="main-content-wrapper flex-1 flex flex-col overflow-hidden">
-            <!-- Header -->
+    <div class="ambient-light">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+    </div>
+
+    <div class="min-h-screen flex flex-col md:flex-row">
+
+        <aside id="adminSidebar"
+            class="fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 -translate-x-full md:translate-x-0 glass-sidebar">
+            {% include 'admin_panel/sidebar.html' %}
+        </aside>
+
+        <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden glass-backdrop"></div>
+
+        <div class="flex-1 flex flex-col md:ml-64 transition-all duration-300 min-h-screen">
+
             {% include 'admin_panel/header.html' %}
 
-            <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
+            <main class="flex-1 p-4 md:p-6 overflow-x-hidden">
+
                 {% if messages %}
-                <div class="mb-6">
+                <div class="mb-6 space-y-2">
                     {% for message in messages %}
-                    <div
-                        class="p-4 rounded-lg mb-2 {% if message.tags == 'success' %}bg-green-100 text-green-800 border border-green-200{% elif message.tags == 'error' %}bg-red-100 text-red-800 border border-red-200{% elif message.tags == 'warning' %}bg-yellow-100 text-yellow-800 border border-yellow-200{% else %}bg-blue-100 text-blue-800 border border-blue-200{% endif %}">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                {% if message.tags == 'success' %}
-                                <i class="fas fa-check-circle mr-3"></i>
-                                {% elif message.tags == 'error' %}
-                                <i class="fas fa-exclamation-circle mr-3"></i>
-                                {% elif message.tags == 'warning' %}
-                                <i class="fas fa-exclamation-triangle mr-3"></i>
-                                {% else %}
-                                <i class="fas fa-info-circle mr-3"></i>
-                                {% endif %}
-                                <span>{{ message }}</span>
-                            </div>
-                            <button class="text-xl hover:opacity-70"
-                                onclick="this.parentElement.parentElement.remove()">
-                                &times;
-                            </button>
+                    <div class="p-4 rounded-xl border backdrop-blur-md flex items-center justify-between shadow-lg animate-fade-in-down
+                        {% if message.tags == 'success' %} bg-emerald-500/10 border-emerald-500/20 text-emerald-200
+                        {% elif message.tags == 'error' %} bg-red-500/10 border-red-500/20 text-red-200
+                        {% elif message.tags == 'warning' %} bg-amber-500/10 border-amber-500/20 text-amber-200
+                        {% else %} bg-blue-500/10 border-blue-500/20 text-blue-200 {% endif %}">
+
+                        <div class="flex items-center">
+                            <i
+                                class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} mr-3 opacity-75"></i>
+                            <span class="font-medium text-sm">{{ message }}</span>
                         </div>
+                        <button onclick="this.parentElement.remove()" class="opacity-60 hover:opacity-100">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                     {% endfor %}
                 </div>
                 {% endif %}
 
-                {% block content %}{% endblock %}
+                <div class="animate-fade-in">
+                    {% block content %}{% endblock %}
+                </div>
+
             </main>
 
-            <!-- Footer -->
-            <footer class="bg-white border-t border-gray-200 py-4 px-6">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="text-gray-500 text-sm">
-                        <p>© 2024 EventAdmin. All rights reserved.</p>
-                    </div>
-                    <div class="flex space-x-4 mt-2 md:mt-0">
-                        <a href="#" class="text-gray-500 hover:text-gray-700 text-sm">Privacy Policy</a>
-                        <a href="#" class="text-gray-500 hover:text-gray-700 text-sm">Terms of Service</a>
-                        <a href="#" class="text-gray-500 hover:text-gray-700 text-sm">Support</a>
+            <footer class="border-t border-white/5 p-6 text-center md:text-left backdrop-blur-sm">
+                <div class="flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+                    <p>© {% now "Y" %} EventAdmin Pro. Secure System.</p>
+                    <div class="flex gap-4 mt-2 md:mt-0">
+                        <a href="#" class="hover:text-slate-300 transition-colors">Privacy</a>
+                        <a href="#" class="hover:text-slate-300 transition-colors">Terms</a>
                     </div>
                 </div>
             </footer>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // Auto-hide alerts after 5 seconds
-        $(document).ready(function () {
-            setTimeout(function () {
-                $('.alert').fadeOut('slow');
-            }, 5000);
-        });
-
-        // Update content wrapper based on sidebar state
         document.addEventListener('DOMContentLoaded', function () {
+            // Mobile Sidebar Logic
             const sidebar = document.getElementById('adminSidebar');
-            const mainContent = document.getElementById('mainContent');
+            const overlay = document.getElementById('sidebarOverlay');
+            const mobileToggle = document.getElementById('mobileMenuToggle'); // This ID must match header.html button
 
-            function updateContentWrapper() {
-                if (window.innerWidth >= 768) {
-                    if (sidebar.classList.contains('-translate-x-full')) {
-                        mainContent.classList.remove('sidebar-open');
-                        mainContent.classList.add('sidebar-closed');
-                    } else {
-                        mainContent.classList.remove('sidebar-closed');
-                        mainContent.classList.add('sidebar-open');
-                    }
+            function toggleSidebar() {
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    // Open Sidebar
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('hidden');
                 } else {
-                    // On mobile, always full width
-                    mainContent.classList.remove('sidebar-open', 'sidebar-closed');
+                    // Close Sidebar
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
                 }
             }
 
-            // Initial update
-            updateContentWrapper();
+            // Click on Toggle Button
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleSidebar();
+                });
+            }
 
-            // Listen for sidebar state changes
-            document.addEventListener('sidebarOpened', updateContentWrapper);
-            document.addEventListener('sidebarClosed', updateContentWrapper);
+            // Click on Overlay to Close
+            if (overlay) {
+                overlay.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                });
+            }
 
-            // Also check on resize
-            window.addEventListener('resize', function () {
-                setTimeout(updateContentWrapper, 100);
-            });
+            // Auto-dismiss messages
+            setTimeout(() => {
+                $('.alert').fadeOut('slow');
+            }, 5000);
         });
     </script>
     {% block extra_js %}{% endblock %}

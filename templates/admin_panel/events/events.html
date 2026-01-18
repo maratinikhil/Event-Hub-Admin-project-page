@@ -1,152 +1,207 @@
 {% extends 'admin_panel/base.html' %}
 {% load humanize %}
 
+{% block title %}Events List - EventAdmin{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Glass Panel Utility */
+    .glass-panel {
+        background: rgba(30, 41, 59, 0.4);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Input Styling */
+    .glass-input {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #e2e8f0;
+    }
+
+    .glass-input:focus {
+        border-color: #3b82f6;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    /* Table Hover */
+    .table-row-hover:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container mx-auto px-4 py-6">
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
+<div class="animate-fade-in-up">
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">{{ page_title }}</h1>
-            <p class="text-gray-600">Manage all your events</p>
+            <h1 class="text-3xl font-bold text-white tracking-tight">{{ page_title|default:"Events Management" }}</h1>
+            <p class="text-slate-400 mt-1 text-sm">Overview of all scheduled events</p>
         </div>
-        <div class="flex space-x-3">
-            <div class="relative">
+
+        <div class="flex gap-3">
+            <div class="relative group">
+                <i
+                    class="fas fa-search absolute left-3 top-3 text-slate-500 group-focus-within:text-blue-400 transition-colors"></i>
                 <input type="text" placeholder="Search events..."
-                    class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    class="glass-input pl-10 pr-4 py-2.5 rounded-xl w-64 text-sm transition-all">
             </div>
+
             <a href="{% url 'admin_create_event' %}"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
-                <i class="fas fa-plus mr-2"></i> Create Event
+                class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all transform hover:-translate-y-0.5">
+                <i class="fas fa-plus"></i>
+                <span class="hidden sm:inline">Create Event</span>
             </a>
         </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-white rounded-xl shadow p-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-sm text-gray-600">Total Events</p>
-                    <h3 class="text-2xl font-bold text-gray-800">{{ total_events }}</h3>
-                </div>
-                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
-                    <i class="fas fa-calendar text-blue-600"></i>
-                </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div
+            class="glass-panel p-5 rounded-xl flex items-center justify-between group hover:bg-white/5 transition-colors">
+            <div>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Total Events</p>
+                <h3 class="text-2xl font-bold text-white mt-1">{{ total_events }}</h3>
+            </div>
+            <div
+                class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-400">
+                <i class="fas fa-calendar-alt text-xl"></i>
             </div>
         </div>
-        <div class="bg-white rounded-xl shadow p-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-sm text-gray-600">Upcoming Events</p>
-                    <h3 class="text-2xl font-bold text-green-600">{{ upcoming_events }}</h3>
-                </div>
-                <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
-                    <i class="fas fa-calendar-check text-green-600"></i>
-                </div>
+
+        <div
+            class="glass-panel p-5 rounded-xl flex items-center justify-between group hover:bg-white/5 transition-colors">
+            <div>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Upcoming</p>
+                <h3 class="text-2xl font-bold text-emerald-400 mt-1">{{ upcoming_events }}</h3>
+            </div>
+            <div
+                class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-400">
+                <i class="fas fa-calendar-check text-xl"></i>
             </div>
         </div>
-        <div class="bg-white rounded-xl shadow p-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-sm text-gray-600">Past Events</p>
-                    <h3 class="text-2xl font-bold text-gray-600">{{ past_events }}</h3>
-                </div>
-                <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
-                    <i class="fas fa-calendar-times text-gray-600"></i>
-                </div>
+
+        <div
+            class="glass-panel p-5 rounded-xl flex items-center justify-between group hover:bg-white/5 transition-colors">
+            <div>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Past Events</p>
+                <h3 class="text-2xl font-bold text-slate-500 mt-1">{{ past_events }}</h3>
+            </div>
+            <div
+                class="w-12 h-12 rounded-xl bg-slate-700/30 flex items-center justify-center border border-slate-600/30 text-slate-500">
+                <i class="fas fa-history text-xl"></i>
             </div>
         </div>
     </div>
 
-    <!-- Events Table -->
-    <div class="bg-white rounded-xl shadow overflow-hidden">
+    <div class="glass-panel rounded-2xl overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full text-left">
+                <thead class="bg-slate-900/50 border-b border-white/5">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Event Details
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date
-                            & Time</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Location</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Bookings</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Date & Time</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Location</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Price</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Bookings</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">
                             Actions</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="divide-y divide-white/5">
                     {% for event in events %}
-                    <tr class="hover:bg-gray-50">
+                    <tr class="table-row-hover transition-colors group">
                         <td class="px-6 py-4">
-                            <div class="flex items-center">
-                                {% if event.image %}
-                                <div class="h-10 w-10 flex-shrink-0">
-                                    <img class="h-10 w-10 rounded-lg object-cover" src="{{ event.image.url }}"
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="h-12 w-12 flex-shrink-0 bg-slate-800 rounded-lg overflow-hidden border border-white/10">
+                                    {% if event.image %}
+                                    <img class="h-full w-full object-cover" src="{{ event.image.url }}"
                                         alt="{{ event.name }}">
+                                    {% else %}
+                                    <div class="h-full w-full flex items-center justify-center text-slate-600">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% endif %}
-                                <div class="ml-4">
-                                    <div class="font-medium text-gray-900">{{ event.name }}</div>
-                                    <div class="text-sm text-gray-500">{{ event.description|truncatechars:50 }}</div>
+                                <div>
+                                    <div
+                                        class="font-bold text-white text-sm group-hover:text-blue-400 transition-colors">
+                                        {{ event.name }}</div>
+                                    <div class="text-xs text-slate-500 mt-0.5 max-w-[150px] truncate">{{ event.description|truncatechars:40 }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ event.date|date:"M d, Y" }}</div>
-                            <div class="text-sm text-gray-500">{{ event.time }}</div>
+
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-slate-300 font-medium">{{ event.date|date:"M d, Y" }}</div>
+                            <div class="text-xs text-slate-500 mt-0.5">{{ event.time }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ event.location }}</div>
-                            <div class="text-sm text-gray-500">{{ event.city }}</div>
+
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-slate-300">{{ event.location }}</div>
+                            <div class="text-xs text-slate-500 mt-0.5">{{ event.city|default:"-" }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="font-medium text-gray-900">₹{{ event.price|floatformat:2 }}</span>
+
+                        <td class="px-6 py-4">
+                            <span class="text-sm font-bold text-emerald-400">₹{{ event.ticket_price|floatformat:2|intcomma }}</span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+
+                        <td class="px-6 py-4">
                             {% if event.date >= today %}
                             <span
-                                class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-green-500/10 text-green-400 border border-green-500/20">
                                 Upcoming
                             </span>
                             {% else %}
                             <span
-                                class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-500/10 text-slate-400 border border-slate-500/20">
                                 Past
                             </span>
                             {% endif %}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="font-medium text-gray-900">{{ event.booking_count }}</span>
-                            <span class="text-sm text-gray-500">bookings</span>
+
+                        <td class="px-6 py-4">
+                            <span class="text-sm font-bold text-white">{{ event.booking_count|default:"0" }}</span>
+                            <span class="text-xs text-slate-500 ml-1">sold</span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="{% url 'admin_event_detail' event.id %}"
-                                class="text-blue-600 hover:text-blue-900 mr-3">
-                                <i class="fas fa-eye"></i> View
-                            </a>
-                            <a href="{% url 'edit_event' event.id %}" class="text-green-600 hover:text-green-900 mr-3">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
-                            <a href="#" class="text-red-600 hover:text-red-900">
-                                <i class="fas fa-trash"></i> Delete
-                            </a>
+
+                        <td class="px-6 py-4 text-right">
+                            <div
+                                class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                                <a href="{% url 'admin_event_detail' event.id %}"
+                                    class="p-1.5 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 text-slate-400 transition-colors"
+                                    title="View">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'edit_event' event.id %}"
+                                    class="p-1.5 rounded-lg hover:bg-emerald-500/20 hover:text-emerald-400 text-slate-400 transition-colors"
+                                    title="Edit">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+                                <button
+                                    class="p-1.5 rounded-lg hover:bg-red-500/20 hover:text-red-400 text-slate-400 transition-colors"
+                                    title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="7" class="px-6 py-8 text-center text-gray-500">
-                            <i class="fas fa-calendar-times text-3xl mb-2"></i>
-                            <p class="text-lg">No events found</p>
+                        <td colspan="7" class="px-6 py-16 text-center">
+                            <div
+                                class="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-700">
+                                <i class="far fa-calendar-times text-2xl text-slate-500"></i>
+                            </div>
+                            <h3 class="text-white font-medium">No events found</h3>
+                            <p class="text-slate-500 text-sm mt-1 mb-4">Get started by creating your first event.</p>
                             <a href="{% url 'admin_create_event' %}"
-                                class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
-                                Create your first event
+                                class="text-blue-400 hover:text-blue-300 text-sm font-bold">
+                                Create Event &rarr;
                             </a>
                         </td>
                     </tr>

@@ -1,426 +1,226 @@
-<!-- admin_panel/templates/admin_panel/header.html -->
-<header class="bg-white border-b border-gray-100 sticky top-0 z-50 backdrop-blur-sm bg-white/95">
-    <div class="px-4 md:px-6 py-3 md:py-4">
+<header class="sticky top-0 z-40 w-full backdrop-blur-xl bg-[#0f172a]/80 border-b border-white/5">
+    <div class="px-4 md:px-6 py-3">
         <div class="flex items-center justify-between">
-            <!-- Left: Brand & Title with Mobile Menu -->
-            <div class="flex items-center space-x-4">
-                <!-- Mobile Menu Toggle -->
+
+            <div class="flex items-center gap-4">
                 <button id="mobileMenuToggle"
-                    class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-                    <div class="flex flex-col space-y-1">
-                        <div class="w-5 h-0.5 bg-gray-700 rounded-full mobile-menu-line"></div>
-                        <div class="w-5 h-0.5 bg-gray-700 rounded-full mobile-menu-line"></div>
-                        <div class="w-5 h-0.5 bg-gray-700 rounded-full mobile-menu-line"></div>
-                    </div>
-                    <span class="sr-only">Toggle menu</span>
+                    class="md:hidden p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
+                    <i class="fas fa-bars text-xl"></i>
                 </button>
 
-                <!-- Brand & Title -->
-                <div class="flex items-center space-x-3">
-                    <div class="relative">
-                        <!-- Animated background circle -->
-                        <div
-                            class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse opacity-20">
-                        </div>
-                        <!-- Brand logo/animated icon -->
-                        <div
-                            class="relative w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-calendar-alt text-white text-lg"></i>
-                            <!-- Animated dot -->
-                            <div
-                                class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-ping opacity-75">
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <h1 class="text-lg md:text-xl font-bold text-gray-900">
-                            <span class="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                {{ page_title|default:"EventAdmin" }}
-                            </span>
-                        </h1>
-                        
-                    </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">
+                        <span class="bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent">
+                            {{ page_title|default:"Dashboard" }}
+                        </span>
+                    </h1>
+                    <p class="hidden md:block text-xs text-slate-500 font-medium">Overview & Statistics</p>
                 </div>
 
-                <!-- Navigation Tabs -->
-                <div class="hidden lg:flex items-center space-x-1 ml-4">
+                <nav class="hidden lg:flex items-center ml-8 p-1 bg-white/5 rounded-xl border border-white/5">
                     <a href="/admin-panel/"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200">
-                        <i class="fas fa-tachometer-alt mr-2"></i>
+                        class="px-4 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 {% if request.path == '/admin-panel/' %}bg-sky-500/10 text-sky-400 shadow-[0_0_10px_rgba(14,165,233,0.15)]{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">
                         Dashboard
                     </a>
                     <a href="/admin-panel/events/"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200">
-                        <i class="fas fa-calendar mr-2"></i>
+                        class="px-4 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 {% if '/events/' in request.path %}bg-blue-500/10 text-blue-400{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">
                         Events
                     </a>
                     <a href="/admin-panel/analytics/"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200">
-                        <i class="fas fa-chart-line mr-2"></i>
+                        class="px-4 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 {% if '/analytics/' in request.path %}bg-purple-500/10 text-purple-400{% else %}text-slate-400 hover:text-white hover:bg-white/5{% endif %}">
                         Analytics
                     </a>
-                </div>
+                </nav>
             </div>
 
-            <!-- Right: Actions & User -->
-            <div class="flex items-center space-x-3 md:space-x-4">
-                <!-- Quick Stats with Animation -->
-                <div class="hidden xl:flex items-center space-x-4">
-                    <div class="relative group">
-                        <div class="px-3 py-2 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                <span class="text-sm font-medium text-gray-700">Live</span>
-                                <span class="text-xs text-gray-500" id="live-time">--:--</span>
-                            </div>
-                        </div>
-                        <!-- Tooltip -->
-                        <div
-                            class="absolute right-0 top-full mt-2 w-48 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-                            System is running in real-time
-                        </div>
-                    </div>
+            <div class="flex items-center gap-3 md:gap-5">
+
+                <div
+                    class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/5 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-xs font-mono text-emerald-400 tracking-wider" id="live-time">--:--:--</span>
                 </div>
 
-                <!-- Notifications with Animated Badge -->
+                <div class="hidden md:block h-6 w-px bg-white/10"></div>
+
                 <div class="relative">
                     <button id="notifications-btn"
-                        class="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-200 relative group">
-                        <i class="fas fa-bell text-lg md:text-xl"></i>
-                        <!-- Animated notification badge -->
-                        <div class="absolute -top-1 -right-1">
-                            <div class="relative">
-                                <div class="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75"></div>
-                                <div class="relative w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                                    <span class="text-xs text-white font-bold">3</span>
-                                </div>
-                            </div>
-                        </div>
+                        class="relative p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5 outline-none">
+                        <i class="far fa-bell text-xl"></i>
+                        <span class="absolute top-1.5 right-2 flex h-2.5 w-2.5">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75"></span>
+                            <span
+                                class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500 border-2 border-[#0f172a]"></span>
+                        </span>
                     </button>
 
-                    <!-- Notifications Dropdown -->
                     <div id="notifications-dropdown"
-                        class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 py-2 transform transition-all duration-200 origin-top-right scale-95 opacity-0">
-                        <!-- Dropdown content -->
-                        <div class="px-4 py-3 border-b">
-                            <div class="flex justify-between items-center">
-                                <h3 class="font-semibold text-gray-900">Notifications</h3>
-                                <button class="text-sm text-blue-600 hover:text-blue-800">Clear All</button>
-                            </div>
+                        class="hidden absolute right-0 mt-3 w-80 bg-[#0f172a] border border-white/10 rounded-2xl shadow-2xl shadow-black/50 py-2 origin-top-right z-50 backdrop-blur-3xl ring-1 ring-black/5">
+                        <div class="px-4 py-3 border-b border-white/5 flex justify-between items-center">
+                            <h3 class="text-sm font-semibold text-white">Notifications</h3>
+                            <button class="text-xs text-sky-400 hover:text-sky-300">Mark all read</button>
                         </div>
-                        <!-- Notification items -->
-                        <div class="max-h-80 overflow-y-auto">
-                            <!-- Sample notification -->
-                            <div class="px-4 py-3 hover:bg-gray-50 border-b border-gray-100 cursor-pointer group">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 mt-1">
-                                        <div
-                                            class="w-8 h-8 bg-gradient-to-r from-green-100 to-green-50 rounded-full flex items-center justify-center animate-pulse">
-                                            <i class="fas fa-ticket-alt text-green-600 text-sm"></i>
-                                        </div>
+                        <div class="max-h-[300px] overflow-y-auto custom-scrollbar">
+                            <a href="#"
+                                class="block px-4 py-3 hover:bg-white/5 transition-colors border-b border-white/5 relative group">
+                                <div class="flex gap-3">
+                                    <div
+                                        class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                                        <i class="fas fa-ticket-alt text-xs"></i>
                                     </div>
-                                    <div class="ml-3 flex-1">
-                                        <p class="text-sm font-medium text-gray-900">New Booking</p>
-                                        <p class="text-xs text-gray-500 mt-0.5">5 tickets for Summer Festival</p>
-                                        <p class="text-xs text-gray-400 mt-1">Just now</p>
+                                    <div>
+                                        <p class="text-sm text-slate-200 group-hover:text-white">New Ticket Sold</p>
+                                        <p class="text-xs text-slate-500 mt-0.5">VIP Pass for Summer Fest</p>
+                                        <p class="text-[10px] text-slate-600 mt-1">2 mins ago</p>
                                     </div>
-                                    <button class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600">
-                                        <i class="fas fa-times text-xs"></i>
-                                    </button>
+                                    <div class="absolute right-4 top-4 w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
                                 </div>
-                            </div>
+                            </a>
+                            <a href="#" class="block px-4 py-3 hover:bg-white/5 transition-colors relative group">
+                                <div class="flex gap-3">
+                                    <div
+                                        class="flex-shrink-0 w-8 h-8 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center">
+                                        <i class="fas fa-exclamation-triangle text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-slate-200 group-hover:text-white">Server Load High</p>
+                                        <p class="text-xs text-slate-500 mt-0.5">CPU usage > 90%</p>
+                                        <p class="text-[10px] text-slate-600 mt-1">1 hour ago</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="px-4 py-2 border-t border-white/5 text-center">
+                            <a href="#"
+                                class="text-xs font-medium text-slate-400 hover:text-white transition-colors">View All
+                                History</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Animated User Profile -->
                 <div class="relative">
                     <button id="user-menu-btn"
-                        class="flex items-center space-x-2 md:space-x-3 p-1 rounded-2xl hover:bg-gray-50 transition-all duration-200 group">
-                        <!-- Animated profile image with gradient border -->
+                        class="flex items-center gap-3 p-1 pr-3 rounded-full hover:bg-white/5 transition-all border border-transparent hover:border-white/5 group">
                         <div class="relative">
-                            <!-- Animated border -->
+                            <img src="https://i.pravatar.cc/150?img=11" alt="Admin"
+                                class="w-9 h-9 rounded-full object-cover border-2 border-[#0f172a] group-hover:border-sky-500/50 transition-colors">
                             <div
-                                class="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-spin-slow">
-                            </div>
-                            <!-- Profile image/GIF -->
-                            <div
-                                class="relative w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border-2 border-white">
-                                <!-- Animated GIF or profile image -->
-                                <img src="https://i.gifer.com/origin/7d/7d5e7b8628d56b16ae5c3a2a8075d896_w200.gif"
-                                    alt="Profile" class="w-full h-full object-cover animate-float">
-                            </div>
-                            <!-- Online status indicator -->
-                            <div
-                                class="absolute bottom-0 right-0 w-2 h-2 md:w-3 md:h-3 bg-green-500 rounded-full border-2 border-white animate-pulse">
+                                class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-[#0f172a] rounded-full">
                             </div>
                         </div>
-
-                        <!-- User info -->
-                        <div class="hidden lg:block text-left">
-                            <div class="flex items-center space-x-2">
-                                <p class="text-sm font-semibold text-gray-900">{{ user.username|default:"Admin User" }}
-                                </p>
-                                <i
-                                    class="fas fa-chevron-down text-gray-400 text-xs transform group-hover:rotate-180 transition-transform duration-200"></i>
-                            </div>
-                            <p class="text-xs text-gray-500">{{ user.role|default:"Administrator" }}</p>
+                        <div class="hidden md:block text-left">
+                            <p class="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">{{ user.username|default:"Admin" }}</p>
+                            <p class="text-[10px] text-slate-500 uppercase tracking-wider">Superuser</p>
                         </div>
+                        <i
+                            class="fas fa-chevron-down text-xs text-slate-500 group-hover:text-white transition-colors"></i>
                     </button>
 
-                    <!-- Animated Dropdown Menu -->
                     <div id="user-dropdown"
-                        class="hidden absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 transform transition-all duration-200 origin-top-right scale-95 opacity-0">
-                        <!-- Header with animated background -->
-                        <div class="px-4 py-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-t-2xl">
-                            <div class="flex items-center space-x-3">
-                                <div class="relative">
-                                    <img src="https://i.gifer.com/origin/7d/7d5e7b8628d56b16ae5c3a2a8075d896_w200.gif"
-                                        alt="Profile" class="w-12 h-12 rounded-full border-2 border-white">
-                                    <div
-                                        class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white">
-                                    </div>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-900">{{ user.username|default:"Admin User" }}</p>
-                                    <p class="text-sm text-gray-600">{{ user.email|default:"admin@example.com" }}</p>
-                                </div>
-                            </div>
+                        class="hidden absolute right-0 mt-3 w-60 bg-[#0f172a] border border-white/10 rounded-2xl shadow-2xl shadow-black/50 py-2 origin-top-right z-50 backdrop-blur-3xl">
+                        <div
+                            class="px-5 py-4 border-b border-white/5 mb-2 bg-gradient-to-r from-sky-500/10 to-transparent">
+                            <p class="text-sm font-bold text-white">{{ user.username|default:"Admin User" }}</p>
+                            <p class="text-xs text-slate-400 truncate">{{ user.email|default:"admin@event.com" }}</p>
                         </div>
 
-                        <!-- Menu Items -->
-                        <div class="py-2">
-                            <a href="/admin-panel/"
-                                class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 group transition-all duration-150">
-                                <div
-                                    class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-200 transition-colors">
-                                    <i class="fas fa-tachometer-alt text-blue-600"></i>
-                                </div>
-                                <div>
-                                    <p class="font-medium">Dashboard</p>
-                                    <p class="text-xs text-gray-500">View analytics</p>
-                                </div>
-                            </a>
-                            <a href="/admin-panel/profile/"
-                                class="flex items-center px-4 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 group transition-all duration-150">
-                                <div
-                                    class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-purple-200 transition-colors">
-                                    <i class="fas fa-user-cog text-purple-600"></i>
-                                </div>
-                                <div>
-                                    <p class="font-medium">Profile Settings</p>
-                                    <p class="text-xs text-gray-500">Manage account</p>
-                                </div>
-                            </a>
-                            <a href="/admin-panel/settings/"
-                                class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-gray-900 group transition-all duration-150">
-                                <div
-                                    class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-gray-200 transition-colors">
-                                    <i class="fas fa-cog text-gray-600"></i>
-                                </div>
-                                <div>
-                                    <p class="font-medium">System Settings</p>
-                                    <p class="text-xs text-gray-500">Configure system</p>
-                                </div>
-                            </a>
+                        <a href="/admin-panel/profile/"
+                            class="flex items-center gap-3 px-5 py-2.5 text-sm text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+                            <i class="far fa-user w-4"></i> Profile
+                        </a>
+                        <a href="/admin-panel/settings/"
+                            class="flex items-center gap-3 px-5 py-2.5 text-sm text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+                            <i class="fas fa-cog w-4"></i> Settings
+                        </a>
 
-                            <div class="border-t border-gray-100 my-2"></div>
+                        <div class="my-2 border-t border-white/5"></div>
 
-                            <a href="/admin-panel/logout/"
-                                class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 group transition-all duration-150">
-                                <div
-                                    class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-red-200 transition-colors">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                </div>
-                                <div>
-                                    <p class="font-medium">Logout</p>
-                                    <p class="text-xs text-red-400">Sign out of account</p>
-                                </div>
-                            </a>
-                        </div>
+                        <a href="/admin-panel/logout/"
+                            class="flex items-center gap-3 px-5 py-2.5 text-sm text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors">
+                            <i class="fas fa-sign-out-alt w-4"></i> Logout
+                        </a>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 </header>
 
-<!-- Custom Animations -->
-<style>
-    /* Custom animations */
-    @keyframes float {
-
-        0%,
-        100% {
-            transform: translateY(0px);
-        }
-
-        50% {
-            transform: translateY(-5px);
-        }
-    }
-
-    @keyframes spin-slow {
-        from {
-            transform: rotate(0deg);
-        }
-
-        to {
-            transform: rotate(360deg);
-        }
-    }
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .animate-float {
-        animation: float 3s ease-in-out infinite;
-    }
-
-    .animate-spin-slow {
-        animation: spin-slow 3s linear infinite;
-    }
-
-    .animate-slide-down {
-        animation: slideDown 0.2s ease-out;
-    }
-
-    /* Smooth transitions */
-    .transition-all {
-        transition-property: all;
-        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* Custom scrollbar */
-    #notifications-dropdown div::-webkit-scrollbar {
-        width: 4px;
-    }
-
-    #notifications-dropdown div::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-    }
-
-    #notifications-dropdown div::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 4px;
-    }
-
-    /* Mobile menu animation */
-    #mobileMenuToggle:hover .mobile-menu-line {
-        background-color: #3b82f6;
-    }
-</style>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Mobile menu toggle for sidebar
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        if (mobileMenuToggle) {
-            mobileMenuToggle.addEventListener('click', function () {
-                const sidebar = document.getElementById('adminSidebar');
-                const overlay = document.getElementById('sidebarOverlay');
 
-                if (sidebar.classList.contains('-translate-x-full')) {
-                    sidebar.classList.remove('-translate-x-full');
-                    overlay.classList.remove('hidden');
-                } else {
-                    sidebar.classList.add('-translate-x-full');
-                    overlay.classList.add('hidden');
-                }
-            });
-        }
-
-        // Update live time
-        function updateLiveTime() {
+        // --- 1. Live Time Clock ---
+        function updateTime() {
             const now = new Date();
-            const time = now.toLocaleTimeString([], {
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour12: false,
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
             });
-            const timeElement = document.getElementById('live-time');
-            if (timeElement) {
-                timeElement.textContent = time;
-            }
+            const el = document.getElementById('live-time');
+            if (el) el.textContent = timeString;
         }
-        updateLiveTime();
-        setInterval(updateLiveTime, 1000);
+        setInterval(updateTime, 1000);
+        updateTime();
 
-        // Dropdown management with animations
-        function setupDropdown(buttonId, dropdownId) {
-            const button = document.getElementById(buttonId);
-            const dropdown = document.getElementById(dropdownId);
+        // --- 2. Dropdown Logic (Generic) ---
+        function setupDropdown(btnId, menuId) {
+            const btn = document.getElementById(btnId);
+            const menu = document.getElementById(menuId);
 
-            if (button && dropdown) {
-                button.addEventListener('click', function (e) {
-                    e.stopPropagation();
+            if (!btn || !menu) return;
 
-                    // Toggle dropdown with animation
-                    if (dropdown.classList.contains('hidden')) {
-                        dropdown.classList.remove('hidden', 'scale-95', 'opacity-0');
-                        dropdown.classList.add('scale-100', 'opacity-100');
-
-                        // Add slide down animation
-                        dropdown.style.animation = 'slideDown 0.2s ease-out';
-                    } else {
-                        dropdown.classList.remove('scale-100', 'opacity-100');
-                        dropdown.classList.add('scale-95', 'opacity-0');
-
-                        // Hide after animation
-                        setTimeout(() => {
-                            dropdown.classList.add('hidden');
-                        }, 150);
-                    }
-                });
-            }
-        }
-
-        // Setup all dropdowns
-        setupDropdown('user-menu-btn', 'user-dropdown');
-        setupDropdown('notifications-btn', 'notifications-dropdown');
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function () {
-            document.querySelectorAll('[id$="dropdown"]').forEach(dropdown => {
-                if (!dropdown.classList.contains('hidden')) {
-                    dropdown.classList.remove('scale-100', 'opacity-100');
-                    dropdown.classList.add('scale-95', 'opacity-0');
-
-                    setTimeout(() => {
-                        dropdown.classList.add('hidden');
-                    }, 150);
-                }
-            });
-        });
-
-        // Prevent dropdown close when clicking inside
-        document.querySelectorAll('[id$="dropdown"]').forEach(dropdown => {
-            dropdown.addEventListener('click', function (e) {
+            btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-            });
-        });
+                const isHidden = menu.classList.contains('hidden');
 
-        // Notification dismissal
-        document.querySelectorAll('#notifications-dropdown .hover\\:bg-gray-50').forEach(item => {
-            item.addEventListener('click', function (e) {
-                if (e.target.closest('button')) {
-                    this.style.opacity = '0.5';
-                    this.style.transform = 'translateX(100%)';
-                    setTimeout(() => {
-                        this.remove();
-                    }, 300);
+                // Close all others first
+                document.querySelectorAll('[id$="-dropdown"]').forEach(el => el.classList.add('hidden'));
+
+                if (isHidden) {
+                    menu.classList.remove('hidden');
+                    // Simple entrance animation
+                    menu.animate([
+                        { opacity: 0, transform: 'scale(0.95) translateY(-10px)' },
+                        { opacity: 1, transform: 'scale(1) translateY(0)' }
+                    ], { duration: 200, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' });
                 }
             });
+
+            // Prevent closing when clicking inside menu
+            menu.addEventListener('click', (e) => e.stopPropagation());
+        }
+
+        setupDropdown('notifications-btn', 'notifications-dropdown');
+        setupDropdown('user-menu-btn', 'user-dropdown');
+
+        // Close on outside click
+        document.addEventListener('click', () => {
+            document.querySelectorAll('[id$="-dropdown"]').forEach(el => el.classList.add('hidden'));
         });
+
+        // --- 3. Mobile Sidebar Toggle ---
+        // Emits a custom event for base.html or sidebar.html to catch
+        const mobileToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('adminSidebar');
+
+        if (mobileToggle && sidebar) {
+            mobileToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Toggle Tailwind classes for sidebar visibility
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.remove('-translate-x-full'); // Open
+                } else {
+                    sidebar.classList.add('-translate-x-full'); // Close
+                }
+            });
+        }
     });
 </script>

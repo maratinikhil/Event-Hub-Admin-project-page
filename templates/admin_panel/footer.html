@@ -1,13 +1,37 @@
-<!-- admin_panel/templates/admin_panel/footer.html -->
-<footer class="bg-white border-t border-gray-200 mt-8">
-    <div class="container mx-auto px-6 py-4">
-        <div class="text-center text-gray-500 text-sm">
-            <p>EventAdmin v1.0 • © 2024 EventProject • All rights reserved</p>
-            <p class="text-xs mt-2">
-                <i class="fas fa-server mr-1"></i> Server: <span class="font-medium text-green-600">Online</span> •
-                <i class="fas fa-database ml-4 mr-1"></i> Database: <span
-                    class="font-medium text-green-600">Connected</span>
-            </p>
+<footer class="border-t border-white/5 bg-[#0f172a]/80 backdrop-blur-xl mt-auto z-30">
+    <div class="px-6 py-4">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
+
+            <div class="text-slate-500 text-center md:text-left">
+                <p>
+                    <span class="font-semibold text-slate-400">EventAdmin</span>
+                    <span class="opacity-50">v2.1.0</span>
+                    <span class="mx-2 text-slate-700">|</span>
+                    &copy; {% now "Y" %} EventProject. All rights reserved.
+                </p>
+            </div>
+
+            <div class="flex items-center gap-4 md:gap-6 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+
+                <div class="flex items-center gap-2" title="Server Status">
+                    <div class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </div>
+                    <span class="font-medium text-slate-400">Server Online</span>
+                </div>
+
+                <div class="w-px h-3 bg-white/10"></div>
+
+                <div class="flex items-center gap-2" title="Database Connection">
+                    <i class="fas fa-database text-sky-500/70 text-[10px]"></i>
+                    <span class="font-medium text-slate-400">
+                        DB: <span class="text-emerald-400">Connected</span>
+                    </span>
+                </div>
+            </div>
+
         </div>
     </div>
 </footer>

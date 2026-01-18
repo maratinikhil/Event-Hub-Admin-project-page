@@ -184,7 +184,6 @@ class BookingsEventAdmin(admin.ModelAdmin):
     list_display = ('booking_id', 'customer_name', 'event', 'number_of_tickets', 'total_amount', 'status_display', 'payment_status_display', 'booking_date')
     list_filter = ('status', 'payment_status', 'booking_date')
     search_fields = ('booking_id', 'customer_name', 'customer_email', 'customer_phone', 'event__name')
-    readonly_fields = ('razorpay_order_id', 'razorpay_payment_id', 'razorpay_signature', 'booking_id')
     date_hierarchy = 'booking_date'
     
     def status_display(self, obj):

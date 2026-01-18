@@ -52,9 +52,7 @@ class BookingsEvent(models.Model):
     customer_phone = models.CharField(max_length=15,blank=True,null=True)
     special_request = models.TextField(blank=True,null=True)
     payment_status = models.BooleanField(default=False)
-    razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)
-    razorpay_payment_id = models.CharField(max_length=100, blank=True, null=True)
-    razorpay_signature = models.CharField(max_length=255, blank=True, null=True)
+
 
     class Meta:
         managed = False
