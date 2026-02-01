@@ -1,0 +1,109 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-white mb-2">Create New Booking</h2>
+        <p class="text-sm text-slate-400">Manually book tickets for a user. Inventory will be updated automatically.</p>
+    </div>
+
+    <div class="bg-[#0f172a]/60 backdrop-blur-xl border border-white/5 rounded-2xl p-6 md:p-8">
+
+        <form method="POST" action="{% url 'book_comedy_show' %}" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="space-y-2">
+                <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">Select User</label>
+                <div class="relative">
+                    <select name="user_id" required
+                        class="w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-amber-500/50 appearance-none">
+                        <option value="" disabled selected>Choose a customer...</option>
+                        {% for user in users %}
+                        <option value="{{ user.id }}">{{ user.username }} ({{ user.email }})</option>
+                        {% endfor %}
+                    </select>
+                    <i
+                        class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"></i>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">Select Comedy Show</label>
+                <div class="relative">
+                    <select name="show_id" id="showSelect" required onchange="updatePrice()" title="Select a Comedy Show"
+                        class="w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-amber-500/50 appearance-none">
+                        <option value="" disabled selected>Choose a show...</option>
+                        {% for show in shows %}
+                        <option value="{{ show.id }}" data-price="{{ show.ticket_price }}"
+                            data-seats="{{ show.available_seats }}">
+                            {{ show.title }} - {{ show.date }} (${{ show.ticket_price }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <i
+                        class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">Number of
+                        Tickets</label>
+                    <input type="number" name="tickets" id="ticketInput" min="1" value="1" required
+                        oninput="updatePrice()" title="Enter the number of tickets to book" placeholder="Enter number of tickets"
+                        class="w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-amber-500/50">
+                    <p class="text-[10px] text-slate-500" id="seatHint">Select a show to see available seats</p>
+                </div>
+
+                <div
+                    class="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 flex flex-col justify-center items-end">
+                    <span class="text-xs text-slate-400 uppercase">Estimated Total</span>
+                    <span class="text-2xl font-bold text-amber-400" id="totalDisplay">$0.00</span>
+                </div>
+            </div>
+
+            <div class="pt-4 flex items-center gap-4 border-t border-white/5">
+                <button type="submit"
+                    class="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold hover:shadow-lg hover:shadow-amber-500/20 transition-all transform active:scale-[0.98]">
+                    Confirm Booking
+                </button>
+                <a href="{% url 'comedy_bookings' %}"
+                    class="px-6 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-medium transition-colors">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function updatePrice() {
+        const showSelect = document.getElementById('showSelect');
+        const ticketInput = document.getElementById('ticketInput');
+        const totalDisplay = document.getElementById('totalDisplay');
+        const seatHint = document.getElementById('seatHint');
+
+        const selectedOption = showSelect.options[showSelect.selectedIndex];
+
+        if (selectedOption.value) {
+            const price = parseFloat(selectedOption.getAttribute('data-price'));
+            const seats = parseInt(selectedOption.getAttribute('data-seats'));
+            const tickets = parseInt(ticketInput.value) || 0;
+
+            // Update Total
+            const total = (price * tickets).toFixed(2);
+            totalDisplay.innerText = `$${total}`;
+
+            // Update Seat Hint
+            seatHint.innerText = `${seats} seats currently available`;
+
+            // Validate Max
+            ticketInput.max = seats;
+        } else {
+            totalDisplay.innerText = "$0.00";
+            seatHint.innerText = "Select a show first";
+        }
+    }
+</script>
+{% endblock %}

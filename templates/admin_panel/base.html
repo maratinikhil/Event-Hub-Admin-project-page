@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
@@ -12,7 +12,9 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -21,7 +23,29 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-in': 'slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                        'blob': 'blob 10s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
                     }
                 }
             }
@@ -29,14 +53,28 @@
     </script>
 
     <style>
+        /* --- Global Theme & Scrollbars --- */
         body {
-            background-color: #0f172a;
-            /* Slate 900 */
+            background-color: #020617;
+            /* Slate 950 */
             color: #e2e8f0;
             /* Slate 200 */
         }
 
-        /* Ambient Background */
+        /* 1. The Global Noise Texture */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            opacity: 1;
+        }
+
+        /* 2. Ambient Light Orbs */
         .ambient-light {
             position: fixed;
             top: 0;
@@ -51,116 +89,91 @@
         .orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.4;
-            animation: blob 15s infinite alternate;
+            filter: blur(100px);
+            opacity: 0.3;
+            animation: blob 20s infinite alternate;
         }
 
-        .orb-1 {
-            top: -10%;
-            left: -10%;
-            width: 50vw;
-            height: 50vw;
-            background: #0f766e;
-        }
-
-        .orb-2 {
-            bottom: -10%;
-            right: -10%;
-            width: 50vw;
-            height: 50vw;
-            background: #0ea5e9;
-            animation-delay: 2s;
-        }
-
-        @keyframes blob {
-            0% {
-                transform: translate(0px, 0px) scale(1);
-            }
-
-            33% {
-                transform: translate(30px, -50px) scale(1.1);
-            }
-
-            66% {
-                transform: translate(-20px, 20px) scale(0.9);
-            }
-
-            100% {
-                transform: translate(0px, 0px) scale(1);
-            }
-        }
-
-        /* Glass Sidebar Styling */
-        .glass-sidebar {
-            background: rgba(15, 23, 42, 0.95);
-            /* Slightly darker for legibility */
-            backdrop-filter: blur(16px);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        /* Custom Scrollbar */
+        /* 3. Dark Scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.5);
+            background: #020617;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(148, 163, 184, 0.3);
-            border-radius: 3px;
+            background: #1e293b;
+            border-radius: 4px;
+            border: 2px solid #020617;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(148, 163, 184, 0.5);
+            background: #334155;
+        }
+
+        /* Utility: Glass Panel for Content Blocks */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 
-<body class="antialiased font-sans relative">
+<body class="antialiased font-sans relative overflow-x-hidden">
 
+    <div class="noise-overlay"></div>
     <div class="ambient-light">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+        <div class="orb w-[500px] h-[500px] bg-indigo-600/30 top-[-10%] left-[-10%]"></div>
+        <div class="orb w-[400px] h-[400px] bg-sky-600/20 bottom-[10%] right-[-5%] animation-delay-2000"></div>
+        <div class="orb w-[300px] h-[300px] bg-fuchsia-600/20 top-[40%] left-[40%] animation-delay-4000"></div>
     </div>
 
-    <div class="min-h-screen flex flex-col md:flex-row">
+    <div class="relative z-10 min-h-screen flex">
 
         <aside id="adminSidebar"
-            class="fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 -translate-x-full md:translate-x-0 glass-sidebar">
+            class="fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out -translate-x-full md:translate-x-0 h-full">
             {% include 'admin_panel/sidebar.html' %}
         </aside>
 
-        <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden glass-backdrop"></div>
+        <div id="sidebarOverlay"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity duration-300">
+        </div>
 
-        <div class="flex-1 flex flex-col md:ml-64 transition-all duration-300 min-h-screen">
+        <div class="flex-1 flex flex-col md:ml-64 min-h-screen transition-all duration-300">
 
             {% include 'admin_panel/header.html' %}
 
-            <main class="flex-1 p-4 md:p-6 overflow-x-hidden">
+            <main class="flex-1 p-4 md:p-8 relative">
 
                 {% if messages %}
-                <div class="mb-6 space-y-2">
+                <div class="fixed top-24 right-6 z-50 flex flex-col gap-3 w-full max-w-sm pointer-events-none">
                     {% for message in messages %}
-                    <div class="p-4 rounded-xl border backdrop-blur-md flex items-center justify-between shadow-lg animate-fade-in-down
-                        {% if message.tags == 'success' %} bg-emerald-500/10 border-emerald-500/20 text-emerald-200
-                        {% elif message.tags == 'error' %} bg-red-500/10 border-red-500/20 text-red-200
-                        {% elif message.tags == 'warning' %} bg-amber-500/10 border-amber-500/20 text-amber-200
-                        {% else %} bg-blue-500/10 border-blue-500/20 text-blue-200 {% endif %}">
+                    <div class="pointer-events-auto flex items-start p-4 rounded-xl shadow-xl border backdrop-blur-xl animate-slide-in
+                        {% if message.tags == 'success' %} bg-emerald-500/10 border-emerald-500/20 text-emerald-100 shadow-emerald-900/20
+                        {% elif message.tags == 'error' %} bg-rose-500/10 border-rose-500/20 text-rose-100 shadow-rose-900/20
+                        {% elif message.tags == 'warning' %} bg-amber-500/10 border-amber-500/20 text-amber-100 shadow-amber-900/20
+                        {% else %} bg-blue-500/10 border-blue-500/20 text-blue-100 shadow-blue-900/20 {% endif %}">
 
-                        <div class="flex items-center">
+                        <div class="flex-shrink-0 mt-0.5">
                             <i
-                                class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} mr-3 opacity-75"></i>
-                            <span class="font-medium text-sm">{{ message }}</span>
+                                class="fas {% if message.tags == 'success' %}fa-check-circle text-emerald-400{% elif message.tags == 'error' %}fa-times-circle text-rose-400{% elif message.tags == 'warning' %}fa-exclamation-triangle text-amber-400{% else %}fa-info-circle text-blue-400{% endif %}"></i>
                         </div>
-                        <button onclick="this.parentElement.remove()" class="opacity-60 hover:opacity-100">
-                            <i class="fas fa-times"></i>
-                        </button>
+
+                        <div class="ml-3 w-0 flex-1">
+                            <p class="text-sm font-medium">{{ message }}</p>
+                        </div>
+
+                        <div class="ml-4 flex-shrink-0 flex">
+                            <button onclick="this.parentElement.remove()"
+                                class="inline-flex text-white/50 hover:text-white focus:outline-none transition-colors">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
@@ -172,39 +185,32 @@
 
             </main>
 
-            <footer class="border-t border-white/5 p-6 text-center md:text-left backdrop-blur-sm">
-                <div class="flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
-                    <p>© {% now "Y" %} EventAdmin Pro. Secure System.</p>
-                    <div class="flex gap-4 mt-2 md:mt-0">
-                        <a href="#" class="hover:text-slate-300 transition-colors">Privacy</a>
-                        <a href="#" class="hover:text-slate-300 transition-colors">Terms</a>
-                    </div>
-                </div>
-            </footer>
+            {% include 'admin_panel/footer.html' %}
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Mobile Sidebar Logic
+            // --- Mobile Sidebar Logic ---
             const sidebar = document.getElementById('adminSidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            const mobileToggle = document.getElementById('mobileMenuToggle'); // This ID must match header.html button
+            // 'mobileMenuToggle' is inside header.html
+            const mobileToggle = document.getElementById('mobileMenuToggle');
 
             function toggleSidebar() {
-                if (sidebar.classList.contains('-translate-x-full')) {
-                    // Open Sidebar
+                const isClosed = sidebar.classList.contains('-translate-x-full');
+                if (isClosed) {
                     sidebar.classList.remove('-translate-x-full');
                     overlay.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling bg
                 } else {
-                    // Close Sidebar
                     sidebar.classList.add('-translate-x-full');
                     overlay.classList.add('hidden');
+                    document.body.style.overflow = '';
                 }
             }
 
-            // Click on Toggle Button
             if (mobileToggle) {
                 mobileToggle.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -212,18 +218,24 @@
                 });
             }
 
-            // Click on Overlay to Close
             if (overlay) {
                 overlay.addEventListener('click', () => {
-                    sidebar.classList.add('-translate-x-full');
-                    overlay.classList.add('hidden');
+                    toggleSidebar(); // Close
                 });
             }
 
-            // Auto-dismiss messages
-            setTimeout(() => {
-                $('.alert').fadeOut('slow');
-            }, 5000);
+            // --- Auto-Dismiss Messages ---
+            // Finds the message container and removes alerts after 5 seconds
+            const alerts = document.querySelectorAll('.animate-slide-in');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    // Fade out effect before removing
+                    alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-10px)';
+                    setTimeout(() => alert.remove(), 500);
+                }, 5000);
+            });
         });
     </script>
     {% block extra_js %}{% endblock %}

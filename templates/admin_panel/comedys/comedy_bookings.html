@@ -1,0 +1,113 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div
+            class="p-4 rounded-2xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/10 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400">
+                <i class="fas fa-ticket-alt text-xl"></i>
+            </div>
+            <div>
+                <p class="text-xs text-slate-400 uppercase tracking-wider">Total Bookings</p>
+                <h3 class="text-2xl font-bold text-white">{{ bookings.count }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-[#0f172a]/60 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-white/5 bg-white/[0.02]">
+                        <th class="p-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Booking ID</th>
+                        <th class="p-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">User</th>
+                        <th class="p-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Show Details</th>
+                        <th class="p-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Tickets</th>
+                        <th class="p-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Amount</th>
+                        <th class="p-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</th>
+                        <th class="p-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Status</th>
+                        <th class="p-4 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-right">Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    {% for booking in bookings %}
+                    <tr class="hover:bg-white/[0.02] transition-colors group">
+                        <td class="p-4">
+                            <span class="font-mono text-xs text-sky-400">{{ booking.booking_id }}</span>
+                        </td>
+                        <td class="p-4">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center text-xs font-bold text-white border border-white/10">
+                                    {{ booking.user.username|first|upper }}
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-200">{{ booking.user.username }}</p>
+                                    <p class="text-[10px] text-slate-500">{{ booking.user.email }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-4">
+                            <p class="text-sm text-slate-300">{{ booking.comedy_show.title }}</p>
+                            <p class="text-[10px] text-amber-500/80">{{ booking.comedy_show.comedian_name }}</p>
+                        </td>
+                        <td class="p-4 text-sm text-slate-300">
+                            {{ booking.number_of_tickets }}
+                        </td>
+                        <td class="p-4 text-sm font-medium text-emerald-400">
+                            ${{ booking.total_price }}
+                        </td>
+                        <td class="p-4 text-xs text-slate-400">
+                            {{ booking.booking_date|date:"M d, Y" }}
+                            <span class="block text-[10px] text-slate-600">{{ booking.booking_date|time:"H:i" }}</span>
+                        </td>
+                        <td class="p-4">
+                            {% if booking.payment_status %}
+                            <span
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Paid
+                            </span>
+                            {% else %}
+                            <span
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending
+                            </span>
+                            {% endif %}
+                        </td>
+
+                        <td class="p-4">
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="{% url 'comedy_show_bookings_view' booking.id %}" title="View Details"
+                                    class="p-2 rounded-lg text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 transition-all duration-200">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+
+                                <a href="{% url 'comedy_show_bookings_edit' booking.id %}" title="Edit Booking"
+                                    class="p-2 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-amber-400/10 transition-all duration-200">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+
+                                <button type="button" title="Delete Booking"
+                                    class="p-2 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 transition-all duration-200">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="p-8 text-center text-slate-500">
+                            No bookings found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

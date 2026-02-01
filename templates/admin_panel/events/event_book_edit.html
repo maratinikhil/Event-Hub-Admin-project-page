@@ -1,0 +1,118 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Edit Booking #{{ booking.booking_id }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .glass-panel {
+        background: rgba(30, 41, 59, 0.4);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .glass-input {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #e2e8f0;
+    }
+
+    .glass-input:focus {
+        border-color: #3b82f6;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto animate-fade-in-up">
+
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-white">Edit Booking</h1>
+            <p class="text-slate-400 text-sm mt-1">Update details for ID: <span class="text-blue-400 font-mono">#{{ booking.booking_id }}</span></p>
+        </div>
+        <a href="{% url 'admin_event_bookings' %}"
+            class="px-4 py-2 glass-panel rounded-xl text-sm text-slate-300 hover:text-white transition-colors">
+            <i class="fas fa-times mr-2"></i> Cancel
+        </a>
+    </div>
+
+    <div class="glass-panel rounded-2xl p-8">
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="border-b border-white/5 pb-6">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4">Customer Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-400">Full Name</label>
+                        <input type="text" name="customer_name" value="{{ booking.customer_name }}" required
+                            class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-400">Email Address</label>
+                        <input type="email" name="customer_email" value="{{ booking.customer_email }}" required
+                            class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-400">Phone Number</label>
+                        <input type="text" name="customer_phone" value="{{ booking.customer_phone|default:'' }}"
+                            class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-b border-white/5 pb-6">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4">Reservation Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-400">Event</label>
+                        <input type="text" value="{{ booking.event.name }}" disabled
+                            class="glass-input w-full px-4 py-2.5 rounded-xl text-sm opacity-50 cursor-not-allowed">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-400">Number of Tickets</label>
+                        <input type="number" name="number_of_tickets" min="1" value="{{ booking.number_of_tickets }}"
+                            required class="glass-input w-full px-4 py-2.5 rounded-xl text-sm">
+                        <p class="text-[10px] text-slate-500">Total amount will automatically update.</p>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-400">Status</label>
+                        <select name="status" class="glass-input w-full px-4 py-2.5 rounded-xl text-sm cursor-pointer">
+                            <option value="pending" {% if booking.status == 'pending' %}selected{% endif %}>Pending
+                            </option>
+                            <option value="confirmed" {% if booking.status == 'confirmed' %}selected{% endif %}>Confirmed
+                            </option>
+                            <option value="cancelled" {% if booking.status == 'cancelled' %}selected{% endif %}>Cancelled
+                            </option>
+                        </select>
+                    </div>
+                    <div class="flex items-center h-full pt-6">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" name="payment_status"
+                                class="w-5 h-5 rounded border-white/20 bg-white/5 text-blue-600 focus:ring-0" 
+                                {% if booking.payment_status %}checked{% endif %}>
+                            <span class="ml-3 text-sm text-slate-300">Payment Received</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label class="text-xs font-bold text-slate-400 mb-2 block">Special Request / Notes</label>
+                <textarea name="special_request" rows="3"
+                    class="glass-input w-full px-4 py-3 rounded-xl text-sm">{{ booking.special_request }}</textarea>
+            </div>
+
+            <div class="pt-4 flex justify-end gap-3">
+                <button type="submit"
+                    class="px-8 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all transform hover:-translate-y-0.5">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

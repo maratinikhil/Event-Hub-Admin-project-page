@@ -1,0 +1,174 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Booking #{{ booking.id }} Details{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-8">
+    <div class="flex items-center gap-4">
+        <a href="{% url 'admin_movie_list' %}" title="Back to Bookings"
+            class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-white">Booking Details</h1>
+            <p class="text-slate-400 text-sm mt-1">
+                ID: <span class="font-mono text-slate-200">#{{ booking.id }}</span> • Placed on {{ booking.booked_at|date:"M d, Y" }}
+            </p>
+        </div>
+    </div>
+
+    <div class="flex gap-3">
+        <a href="{% url 'movies_booking_edit' booking.id %}"
+            class="flex items-center gap-2 px-4 py-2 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 border border-yellow-500/20 rounded-lg text-sm font-medium transition-all">
+            <i class="fas fa-pen"></i> Edit Booking
+        </a>
+        <button onclick="openDeleteModal('{{ booking.id }}', '{{ booking.user.username }}')"
+            class="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-lg text-sm font-medium transition-all">
+            <i class="fas fa-trash"></i> Delete
+        </button>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <div class="lg:col-span-2 space-y-6">
+        <div class="bg-slate-900/50 border border-white/5 rounded-2xl p-6 relative overflow-hidden">
+            <div class="flex gap-6">
+                <div class="w-32 h-48 bg-slate-800 rounded-lg shrink-0 overflow-hidden border border-white/5">
+                    {% if booking.movie.image %}
+                    <img src="{{ booking.movie.image.url }}" alt="{{ booking.movie.title }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-slate-600">
+                        <i class="fas fa-film text-4xl"></i>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white mb-2">{{ booking.movie.title }}</h2>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="px-2 py-1 bg-white/5 rounded text-xs text-slate-300 border border-white/5">
+                                    {{ booking.movie.language }}
+                                </span>
+                                <span class="px-2 py-1 bg-white/5 rounded text-xs text-slate-300 border border-white/5">
+                                    {{ booking.movie.genre }}
+                                </span>
+                                <span class="px-2 py-1 bg-white/5 rounded text-xs text-slate-300 border border-white/5">
+                                    {{ booking.movie.duration }} mins
+                                </span>
+                            </div>
+                        </div>
+                        {% if booking.payment_status %}
+                        <span
+                            class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold uppercase tracking-wide">
+                            <i class="fas fa-check-circle mr-1"></i> Paid
+                        </span>
+                        {% else %}
+                        <span
+                            class="px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold uppercase tracking-wide">
+                            <i class="fas fa-times-circle mr-1"></i> Failed
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mt-4">
+                        <div class="p-3 bg-black/20 rounded-xl border border-white/5">
+                            <p class="text-xs text-slate-500 uppercase font-semibold mb-1">Theater / Screen</p>
+                            <p class="text-white text-sm flex items-center gap-2">
+                                <i class="fas fa-tv text-purple-500"></i> {{ booking.screen.screen_name }}
+                            </p>
+                        </div>
+                        <div class="p-3 bg-black/20 rounded-xl border border-white/5">
+                            <p class="text-xs text-slate-500 uppercase font-semibold mb-1">Show Time</p>
+                            <p class="text-white text-sm flex items-center gap-2">
+                                <i class="fas fa-clock text-blue-500"></i> {{ booking.movie.time|time:"h:i A" }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-6 border-t border-white/5">
+                <p class="text-slate-400 text-sm mb-3">Selected Seats</p>
+                <div class="flex flex-wrap gap-2">
+                    {% for seat in booking.seats.all %}
+                    <span
+                        class="w-10 h-10 rounded bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-lg shadow-blue-900/20">
+                        {{ seat.seat_number }}
+                    </span>
+                    {% empty %}
+                    <span class="text-slate-500 italic text-sm">No specific seat data</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="space-y-6">
+
+        <div class="bg-slate-900/50 border border-white/5 rounded-2xl p-6">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b border-white/5 pb-2">Customer
+            </h3>
+            <div class="flex items-center gap-4 mb-4">
+                <div
+                    class="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center text-lg font-bold text-white shadow-lg">
+                    {{ booking.user.username|slice:":1"|upper }}
+                </div>
+                <div>
+                    <div class="text-white font-medium">{{ booking.user.username }}</div>
+                    <div class="text-slate-500 text-xs">{{ booking.user.email }}</div>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Phone:</span>
+                    <span class="text-slate-300">{{ booking.user.profile.phone|default:"N/A" }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Member Since:</span>
+                    <span class="text-slate-300">{{ booking.user.date_joined|date:"M Y" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-slate-900/50 border border-white/5 rounded-2xl p-6">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b border-white/5 pb-2">Payment
+                Summary</h3>
+
+            <div class="space-y-3 mb-4">
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-400">Ticket Price (x{{ booking.seats.count }})</span>
+                    <span class="text-slate-200">₹{{ booking.total_price }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-400">GST (18%)</span>
+                    <span class="text-slate-200">₹{{ booking.gst_amount }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-400">Platform Fee</span>
+                    <span class="text-slate-200">₹{{ booking.platform_fee }}</span>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-dashed border-white/10 flex justify-between items-center">
+                <span class="text-white font-bold">Grand Total</span>
+                <span class="text-2xl font-bold text-emerald-400">₹{{ booking.grand_total }}</span>
+            </div>
+
+            <div class="mt-4 p-3 bg-black/30 rounded-lg border border-white/5">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-[10px] text-slate-500 uppercase">Transaction ID</span>
+                    <i class="fas fa-copy text-slate-600 hover:text-white cursor-pointer text-xs"></i>
+                </div>
+                <div class="font-mono text-xs text-slate-300 break-all">
+                    {{ booking.razorpay_payment_id|default:"Pending" }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Add New Movie{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-white">Add New Movie</h1>
+            <p class="text-slate-400 text-sm mt-1">Fill in the details to add a movie to the catalog.</p>
+        </div>
+        <a href="{% url 'admin_movie_list' %}" class="text-slate-400 hover:text-white text-sm transition-colors">
+            <i class="fas fa-arrow-left mr-1"></i> Back to List
+        </a>
+    </div>
+
+    <div class="bg-slate-900/50 border border-white/5 rounded-2xl p-8">
+        <form method="POST" action="" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5">Movie Title</label>
+                <input type="text" name="title" required placeholder="e.g. Inception"
+                    class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Genre</label>
+                    <select name="genre" required
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all appearance-none">
+                        <option value="" disabled selected class="bg-slate-900">Select Genre</option>
+                        <option value="Action" class="bg-slate-900">Action</option>
+                        <option value="Comedy" class="bg-slate-900">Comedy</option>
+                        <option value="Drama" class="bg-slate-900">Drama</option>
+                        <option value="Thriller" class="bg-slate-900">Thriller</option>
+                        <option value="Horror" class="bg-slate-900">Horror</option>
+                        <option value="Sci-Fi" class="bg-slate-900">Sci-Fi</option>
+                        <option value="Romance" class="bg-slate-900">Romance</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Language</label>
+                    <select name="language" required
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all appearance-none">
+                        <option value="" disabled selected class="bg-slate-900">Select Language</option>
+                        <option value="Hindi" class="bg-slate-900">Hindi</option>
+                        <option value="Telugu" class="bg-slate-900">Telugu</option>
+                        <option value="English" class="bg-slate-900">English</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5">Description</label>
+                <textarea name="description" rows="4" required
+                    class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Director</label>
+                    <input type="text" name="director"
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Cast</label>
+                    <input type="text" name="cast" placeholder="Separate by comma"
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Release Date</label>
+                    <input type="date" name="date" required
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Show Time</label>
+                    <input type="time" name="time" required
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Duration</label>
+                    <input type="text" name="duration" placeholder="HH:MM:SS" value="02:30:00" required
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Location</label>
+                    <input type="text" name="location" required
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Price (₹)</label>
+                    <input type="number" step="0.01" name="ticket_price" required
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-2 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Seats</label>
+                    <input type="number" name="available_seats" required
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-2 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Rating</label>
+                    <input type="number" step="0.1" max="5" name="rating" value="4.5"
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-2 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Tag</label>
+                    <select name="popularity"
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50">
+                        <option value="Hot" class="bg-slate-900">Hot</option>
+                        <option value="New" class="bg-slate-900">New</option>
+                        <option value="Trending" class="bg-slate-900">Trending</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Poster</label>
+                    <input type="file" name="image" accept="image/*"
+                        class="w-full text-xs text-slate-400 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-500/20 file:text-purple-300 hover:file:bg-purple-500/30">
+                </div>
+            </div>
+
+            <button type="submit"
+                class="w-full mt-4 bg-purple-600 hover:bg-purple-500 text-white font-medium py-3 rounded-xl transition-all shadow-lg shadow-purple-900/20 active:scale-[0.98]">
+                Add Movie to Catalog
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Edit Movie Screen{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="text-2xl font-bold text-white">Edit Screen</h1>
+        <a href="{% url 'admin_movie_list' %}" class="text-slate-400 hover:text-white text-sm transition-colors">
+            <i class="fas fa-arrow-left mr-1"></i> Back to List
+        </a>
+    </div>
+
+    <div class="bg-slate-900/50 border border-white/5 rounded-2xl p-6">
+        <form method="POST" action="" class="space-y-4">
+            {% csrf_token %}
+
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5">Select Movie</label>
+                <select name="movie" required
+                    class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50">
+                    {% for movie in movies %}
+                    <option value="{{ movie.id }}" class="bg-slate-900" {% if movie.id == screen.movie.id %}selected{% endif %}>
+                        {{ movie.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5">Screen Name</label>
+                <input type="text" name="screen_name" value="{{ screen.screen_name }}" required
+                    class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Total Rows</label>
+                    <input type="number" name="total_rows" value="{{ screen.total_rows }}" min="1" required
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Seats per Row</label>
+                    <input type="number" name="seats_per_row" value="{{ screen.seats_per_row }}" min="1" required
+                        class="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50">
+                </div>
+            </div>
+
+            <div class="h-px bg-white/5 my-4"></div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] uppercase text-amber-500/80 mb-1">Premium Price</label>
+                    <input type="number" step="0.01" name="premium_price" value="{{ screen.premium_price_multiplier }}"
+                        required
+                        class="w-full bg-black/20 border border-amber-500/20 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500/50">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase text-amber-500/80 mb-1">End Row</label>
+                    <input type="number" name="premium_rows_end" value="{{ screen.premium_rows_end }}" required
+                        class="w-full bg-black/20 border border-amber-500/20 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500/50">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] uppercase text-blue-400/80 mb-1">Exec Price</label>
+                    <input type="number" step="0.01" name="executive_price"
+                        value="{{ screen.executive_price_multiplier }}" required
+                        class="w-full bg-black/20 border border-blue-500/20 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500/50">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase text-blue-400/80 mb-1">End Row</label>
+                    <input type="number" name="executive_rows_end" value="{{ screen.executive_rows_end }}" required
+                        class="w-full bg-black/20 border border-blue-500/20 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500/50">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] uppercase text-slate-400/80 mb-1">Normal Price</label>
+                <input type="number" step="0.01" name="normal_price" value="{{ screen.normal_price_multiplier }}"
+                    required
+                    class="w-full bg-black/20 border border-slate-500/20 rounded-lg px-3 py-2 text-sm text-white focus:border-slate-500/50">
+            </div>
+
+            <button type="submit"
+                class="w-full mt-4 bg-purple-600 hover:bg-purple-500 text-white font-medium py-3 rounded-xl transition-all shadow-lg shadow-purple-900/20">
+                Update Screen Details
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

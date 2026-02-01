@@ -1,0 +1,215 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Select Seats - {{ movie.title }}{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold text-white">{{ movie.title }}</h1>
+        <div class="flex items-center gap-3 text-sm text-slate-400 mt-1">
+            <span><i class="fas fa-calendar-alt mr-1"></i> {{ movie.date|date:"D, d M" }}</span>
+            <span><i class="fas fa-clock mr-1"></i> {{ movie.time|time:"H:i A" }}</span>
+            <span><i class="fas fa-map-marker-alt mr-1"></i> {{ screen.screen_name }}</span>
+        </div>
+    </div>
+    <a href="{% url 'book_movie_list' %}" class="text-slate-400 hover:text-white text-sm transition-colors">
+        <i class="fas fa-arrow-left mr-1"></i> Change Movie
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <div class="lg:col-span-2">
+        <div class="bg-slate-900/50 border border-white/5 rounded-2xl p-8 overflow-x-auto custom-scrollbar">
+
+            <div class="mb-10 text-center">
+                <div
+                    class="w-2/3 mx-auto h-2 bg-gradient-to-r from-transparent via-purple-500/50 to-transparent rounded-full mb-4 shadow-[0_10px_20px_-5px_rgba(168,85,247,0.4)]">
+                </div>
+                <p class="text-xs text-slate-500 uppercase tracking-widest">Screen This Way</p>
+            </div>
+
+            <div class="flex flex-col items-center gap-3 min-w-[500px]">
+                {% if seats %}
+                {% regroup seats by row as seat_rows %}
+
+                {% for row in seat_rows %}
+                <div class="flex items-center gap-4">
+                    <div class="w-6 text-xs font-bold text-slate-500 text-center">{{ row.grouper }}</div>
+
+                    <div class="flex gap-2">
+                        {% for seat in row.list %}
+                        <button type="button" data-id="{{ seat.id }}" data-price="{{ seat.price }}"
+                            data-number="{{ row.grouper }}{{ seat.number }}" data-type="{{ seat.seat_type }}" {% if
+                            seat.status !='Available' %}disabled{% endif %} class="seat-item w-8 h-8 rounded-t-lg text-[10px] font-medium transition-all duration-200 flex items-center justify-center border
+                                {% if seat.status != 'Available' %}
+                                    bg-slate-800 border-slate-700 text-slate-600 cursor-not-allowed
+                                {% elif seat.seat_type == 'premium' %}
+                                    bg-amber-500/10 border-amber-500/30 text-amber-500 hover:bg-amber-500 hover:text-white hover:shadow-[0_0_15px_-3px_rgba(245,158,11,0.5)]
+                                {% elif seat.seat_type == 'executive' %}
+                                    bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500 hover:text-white hover:shadow-[0_0_15px_-3px_rgba(59,130,246,0.5)]
+                                {% else %}
+                                    bg-slate-700/30 border-slate-600/30 text-slate-400 hover:bg-white hover:text-black hover:shadow-[0_0_15px_-3px_rgba(255,255,255,0.5)]
+                                {% endif %}">
+                            {{ seat.number }}
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="text-slate-500">No seats generated for this screen yet.</div>
+                {% endif %}
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-6 mt-12 pt-6 border-t border-white/5">
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded bg-slate-800 border border-slate-700"></div>
+                    <span class="text-xs text-slate-400">Sold</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded bg-purple-600 border border-purple-400"></div>
+                    <span class="text-xs text-slate-400">Selected</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded bg-amber-500/20 border border-amber-500/50"></div>
+                    <span class="text-xs text-slate-400">Premium (₹{{ screen.premium_price_multiplier|floatformat:0
+                        }})</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded bg-blue-500/20 border border-blue-500/50"></div>
+                    <span class="text-xs text-slate-400">Executive (₹{{ screen.executive_price_multiplier|floatformat:0
+                        }})</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded bg-slate-700/30 border border-slate-600/30"></div>
+                    <span class="text-xs text-slate-400">Normal (₹{{ screen.normal_price_multiplier|floatformat:0
+                        }})</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lg:col-span-1">
+        <div class="bg-slate-900/50 border border-white/5 rounded-2xl p-6 sticky top-6">
+            <h2 class="text-lg font-semibold text-white mb-4">Booking Summary</h2>
+
+            <div class="space-y-4 mb-6">
+                <div>
+                    <span class="text-xs text-slate-500 uppercase">Seats</span>
+                    <div id="selected-seats-display" class="text-sm text-white font-medium min-h-[20px]">
+                        No seats selected
+                    </div>
+                </div>
+
+                <div class="bg-black/20 rounded-lg p-4 space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-400">Subtotal</span>
+                        <span class="text-white">₹<span id="subtotal-price">0.00</span></span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-400">Booking Fee</span>
+                        <span class="text-white">₹20.00</span>
+                    </div>
+                    <div class="pt-2 border-t border-white/10 flex justify-between font-bold">
+                        <span class="text-purple-400">Grand Total</span>
+                        <span class="text-white text-lg">₹<span id="grand-total">0.00</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="booking-form" method="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" name="selected_seat_ids" id="input-seat-ids">
+                <input type="hidden" name="total_amount" id="input-total-amount">
+
+                <button type="submit" id="checkout-btn" disabled
+                    class="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 rounded-xl transition-all shadow-lg shadow-purple-900/20 active:scale-[0.98]">
+                    Proceed to Payment
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const seats = document.querySelectorAll('.seat-item:not(:disabled)');
+        const seatsDisplay = document.getElementById('selected-seats-display');
+        const subtotalEl = document.getElementById('subtotal-price');
+        const grandTotalEl = document.getElementById('grand-total');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const inputSeatIds = document.getElementById('input-seat-ids');
+        const inputTotal = document.getElementById('input-total-amount');
+
+        const BOOKING_FEE = 20.00;
+        let selectedSeats = [];
+
+        seats.forEach(seat => {
+            seat.addEventListener('click', function () {
+                const id = this.dataset.id;
+                const price = parseFloat(this.dataset.price);
+                const number = this.dataset.number;
+
+                // Toggle Selection Class
+                this.classList.toggle('selected-seat');
+
+                // Check if already selected
+                const index = selectedSeats.findIndex(s => s.id === id);
+
+                if (index === -1) {
+                    // Add seat
+                    selectedSeats.push({ id, price, number });
+
+                    // Add Purple Styling
+                    this.classList.add('bg-purple-600', 'border-purple-500', 'text-white', 'shadow-lg', 'shadow-purple-500/40');
+
+                    // Remove Tier Colors so Purple is visible
+                    this.classList.remove('bg-amber-500/10', 'text-amber-500', 'bg-blue-500/10', 'text-blue-400', 'bg-slate-700/30', 'text-slate-400');
+                } else {
+                    // Remove seat
+                    selectedSeats.splice(index, 1);
+
+                    // Remove Purple Styling
+                    this.classList.remove('selected-seat', 'bg-purple-600', 'border-purple-500', 'text-white', 'shadow-lg', 'shadow-purple-500/40');
+
+                    // Re-apply Tier Colors
+                    const type = this.dataset.type;
+                    if (type === 'premium') this.classList.add('bg-amber-500/10', 'text-amber-500');
+                    else if (type === 'executive') this.classList.add('bg-blue-500/10', 'text-blue-400');
+                    else this.classList.add('bg-slate-700/30', 'text-slate-400');
+                }
+
+                updateSummary();
+            });
+        });
+
+        function updateSummary() {
+            if (selectedSeats.length === 0) {
+                seatsDisplay.textContent = "No seats selected";
+                checkoutBtn.disabled = true;
+                subtotalEl.textContent = "0.00";
+                grandTotalEl.textContent = "0.00";
+                return;
+            }
+
+            // Sort seats naturally (A1, A2, B1...)
+            selectedSeats.sort((a, b) => a.number.localeCompare(b.number));
+            seatsDisplay.textContent = selectedSeats.map(s => s.number).join(', ');
+
+            // Math
+            const subtotal = selectedSeats.reduce((sum, seat) => sum + seat.price, 0);
+            const total = subtotal + BOOKING_FEE;
+
+            // Update UI
+            subtotalEl.textContent = subtotal.toFixed(2);
+            grandTotalEl.textContent = total.toFixed(2);
+            checkoutBtn.disabled = false;
+
+            // Fill Hidden Inputs
+            inputSeatIds.value = selectedSeats.map(s => s.id).join(',');
+            inputTotal.value = total.toFixed(2);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Manage Movies Catalog{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold text-white">Movie Catalog</h1>
+        <p class="text-slate-400 text-sm mt-1">Manage movies currently showing in theaters.</p>
+    </div>
+    <a href="{% url 'add_movie' %}"
+        class="bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all">
+        <i class="fas fa-plus mr-2"></i>Add Movie
+    </a>
+</div>
+
+{% if messages %}
+<div class="mb-6 space-y-2">
+    {% for message in messages %}
+    <div class="p-4 rounded-xl text-sm font-medium
+            {% if message.tags == 'success' %} bg-emerald-500/10 text-emerald-400 border border-emerald-500/20
+            {% else %} bg-red-500/10 text-red-400 border border-red-500/20 {% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="space-y-4">
+    {% if movies %}
+    {% for movie in movies %}
+    <div
+        class="group bg-slate-900/50 border border-white/5 rounded-2xl p-4 hover:border-purple-500/30 transition-all hover:bg-slate-900/80 flex flex-col md:flex-row gap-6">
+
+        <div
+            class="w-full md:w-32 h-48 rounded-xl bg-black/40 overflow-hidden flex-shrink-0 border border-white/5 relative">
+            {% if movie.image %}
+            <img src="{{ movie.image.url }}" alt="{{ movie.title }}"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            {% else %}
+            <div class="w-full h-full flex items-center justify-center text-slate-600">
+                <i class="fas fa-image text-2xl"></i>
+            </div>
+            {% endif %}
+
+            <div
+                class="absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-bold bg-purple-600 text-white shadow-lg">
+                {{ movie.popularity }}
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-start">
+                    <h3 class="text-xl font-bold text-white">{{ movie.title }}</h3>
+                    <div class="flex items-center gap-1 text-amber-400 bg-amber-500/10 px-2 py-1 rounded-lg">
+                        <i class="fas fa-star text-xs"></i>
+                        <span class="text-xs font-bold">{{ movie.rating }}</span>
+                    </div>
+                </div>
+
+                <div class="text-xs text-purple-400 font-medium mb-2">{{ movie.genre }} • {{ movie.language }}</div>
+
+                <p class="text-sm text-slate-400 line-clamp-2 mb-3">{{ movie.description }}</p>
+
+                <div class="flex flex-wrap gap-y-2 gap-x-4 text-xs text-slate-500">
+                    <div class="flex items-center gap-1.5">
+                        <i class="fas fa-clock text-slate-600"></i> {{ movie.duration }}
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <i class="fas fa-calendar text-slate-600"></i> {{ movie.date }}
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <i class="fas fa-map-marker-alt text-slate-600"></i> {{ movie.location }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div>
+                        <span class="text-[10px] uppercase text-slate-500">Price</span>
+                        <div class="text-sm font-bold text-white">₹{{ movie.ticket_price }}</div>
+                    </div>
+                    <div>
+                        <span class="text-[10px] uppercase text-slate-500">Seats</span>
+                        <div class="text-sm font-bold text-emerald-400">{{ movie.available_seats }}</div>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                        class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+                        <i class="fas fa-pen text-xs"></i>
+                    </button>
+                    <button
+                        class="w-8 h-8 rounded-lg bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center text-red-400 transition-colors">
+                        <i class="fas fa-trash text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div
+        class="flex flex-col items-center justify-center h-96 bg-slate-900/30 rounded-2xl border border-dashed border-white/10 text-slate-500">
+        <i class="fas fa-film text-5xl mb-4 opacity-20"></i>
+        <p>No movies in the catalog yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

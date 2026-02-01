@@ -58,7 +58,45 @@ urlpatterns = [
     path('event/bookings/', views.event_bookings_list, name='event_bookings_list'),
     path('event/booking/<str:booking_id>/', views.event_booking_detail, name='event_booking_detail'),
     path('event/booking/<str:booking_id>/cancel/', views.event_booking_cancel, name='event_booking_cancel'),
-    
+    path('event-bookings/<int:booking_id>/edit/', views.admin_event_booking_edit, name='admin_event_booking_edit'),
+    path('events/<int:event_id>/delete/', views.delete_event, name='delete_event'),
+
+    # Movies 
+    path('dashboard/eventapp/moviescreen/', views.admin_movie_screen, name='admin_movie_screen'),  
+    path('dashboard/eventapp/movie/', views.admin_movie_list, name='admin_movie_list'),
+    path('dashboard/eventapp/movieticketbooking/', views.movie_bookings_list, name='movie_bookings_list'),
+    # View Movie Booking 
+    path('bookings/<int:booking_id>/view/', views.movies_booking_view, name='movies_booking_view'),
+    # Edit Movie Booking
+    path('bookings/<int:booking_id>/edit/', views.movies_booking_edit, name='movies_booking_edit'),
+    # Delete Movie Booking
+    path('bookings/<int:booking_id>/delete/', views.movies_booking_delete, name='movies_booking_delete'),
+    # Add Movie
+    path('movies/add/', views.add_movie, name='add_movie'),
+    # Movie Catlog
+    path('movies/', views.movie_catalog, name='movies'),
+    # Edit Movie Screen
+    path('screens/edit/<int:screen_id>/', views.edit_movie_screen, name='edit_movie_screen'),
+    # Delete Movie Screen
+    path('screens/delete/<int:screen_id>/', views.delete_movie_screen, name='delete_movie_screen'),
+    # Book Movie
+    path('book-movie/', views.book_movie, name='book_movie'),
+    # Movie seat selection
+    path('book-movie/<int:movie_id>/seats/', views.book_seat_selection, name='book_seat_selection'),
+
+
+    # comedy shows 
+    path('comedy/shows/', views.comedy_shows_list, name='comedy_shows_list'),
+    path('comedy/bookings/', views.comedy_bookings, name='comedy_bookings'),
+    path('comedy/book-ticket/', views.book_comedy_show, name='book_comedy_show'),
+    path('comedy/add/', views.add_comedy_show, name='add_comedy_show'),
+    path('bookings/view/<int:booking_id>/', views.comedy_show_bookings_view, name='comedy_show_bookings_view'),
+    path('bookings/edit/<int:booking_id>/', views.comedy_show_bookings_edit, name='comedy_show_bookings_edit'),
+    path('comedy-shows/delete/<int:show_id>/', views.delete_comedy_show, name='delete_comedy_show'),
+
+
+
+
     # Other views
     path('movies/create/', views.create_movie, name='create_movie'),
     path('concerts/create/', views.create_concert, name='create_concert'),

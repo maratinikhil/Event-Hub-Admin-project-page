@@ -1,7 +1,9 @@
 {% extends 'admin_panel/base.html' %}
 {% load static %}
 
-{% block title %}Create Event - EventAdmin{% endblock %}
+{% block title %}
+{% if event %}Edit Event{% else %}Create Event{% endif %} - EventAdmin
+{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -17,21 +19,18 @@
         background-color: rgba(0, 0, 0, 0.2);
         border: 1px solid rgba(255, 255, 255, 0.1);
         color: #f1f5f9;
-        /* Slate-100 */
         transition: all 0.3s ease;
     }
 
     .form-input:focus {
         background-color: rgba(0, 0, 0, 0.4);
         border-color: #3b82f6;
-        /* Blue-500 */
         box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         outline: none;
     }
 
     .form-input::placeholder {
         color: #64748b;
-        /* Slate-500 */
     }
 
     /* Date Picker Dark Mode Fix */
@@ -59,14 +58,19 @@
 <div class="container mx-auto max-w-7xl animate-fade-in-up">
 
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-white tracking-tight">Create New Event</h1>
-        <p class="text-slate-400 mt-2">Fill in the details below to launch a new experience.</p>
+        <h1 class="text-3xl font-bold text-white tracking-tight">
+            {% if event %}Edit Event: {{ event.name }}{% else %}Create New Event{% endif %}
+        </h1>
+        <p class="text-slate-400 mt-2">
+            {% if event %}Update the details below to save changes.{% else %}Fill in the details below to launch a new
+            experience.{% endif %}
+        </p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
         <div class="lg:col-span-2">
-            <form method="POST" enctype="multipart/form-data"
+            <form method="POST" enctype="multipart/form-data" action=""
                 class="glass-panel rounded-2xl p-6 md:p-8 relative overflow-hidden">
                 {% csrf_token %}
 
@@ -119,14 +123,16 @@
                             <label for="date"
                                 class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Date</label>
                             <input type="date" id="date" name="date" required
-                                class="form-input w-full rounded-xl px-4 py-3" value="{{ form.date.value|default:'' }}">
+                                class="form-input w-full rounded-xl px-4 py-3"
+                                value="{{ form.date.value|date:'Y-m-d'|default:'' }}">
                         </div>
                         <div>
                             <label for="time"
                                 class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Start
                                 Time</label>
                             <input type="time" id="time" name="time" required
-                                class="form-input w-full rounded-xl px-4 py-3" value="{{ form.time.value|default:'' }}">
+                                class="form-input w-full rounded-xl px-4 py-3"
+                                value="{{ form.time.value|time:'H:i'|default:'' }}">
                         </div>
                         <div class="md:col-span-2">
                             <label for="location"
@@ -194,7 +200,8 @@
                             class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                             onchange="previewImage(event)">
 
-                        <div id="upload-placeholder" class="transition-opacity duration-300">
+                        <div id="upload-placeholder"
+                            class="transition-opacity duration-300 {% if form.image.value %}hidden{% endif %}">
                             <div
                                 class="w-16 h-16 rounded-full bg-slate-800/80 flex items-center justify-center mx-auto mb-4 group-hover:bg-slate-700/80 transition-colors">
                                 <i class="fas fa-cloud-upload-alt text-2xl text-blue-400"></i>
@@ -203,9 +210,11 @@
                             <p class="text-xs text-slate-500 mt-2">Supports JPG, PNG (Max 5MB)</p>
                         </div>
 
-                        <div id="image-preview-container" class="hidden relative z-10">
+                        <div id="image-preview-container"
+                            class="relative z-10 {% if not form.image.value %}hidden{% endif %}">
                             <img id="preview-img-tag"
-                                class="max-h-64 mx-auto rounded-lg shadow-2xl border border-white/10" src="">
+                                class="max-h-64 mx-auto rounded-lg shadow-2xl border border-white/10"
+                                src="{% if form.instance.image %}{{ form.instance.image.url }}{% endif %}">
                             <div class="mt-4">
                                 <span class="text-xs text-blue-400 hover:text-blue-300">Click to change image</span>
                             </div>
@@ -239,7 +248,7 @@
                     </a>
                     <button type="submit"
                         class="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:from-blue-500 hover:to-indigo-500 transition-all transform hover:-translate-y-0.5">
-                        Create Event
+                        {% if event %}Update Event{% else %}Create Event{% endif %}
                     </button>
                 </div>
 
@@ -254,8 +263,9 @@
 
                     <div class="bg-slate-800 rounded-xl overflow-hidden border border-white/5 shadow-xl">
                         <div class="h-40 w-full bg-slate-700 relative overflow-hidden group">
-                            <img id="card-preview-img" src="https://via.placeholder.com/400x200?text=Event+Image"
-                                class="w-full h-full object-cover opacity-60">
+                            <img id="card-preview-img"
+                                src="{% if form.instance.image %}{{ form.instance.image.url }}{% else %}https://via.placeholder.com/400x200?text=Event+Image{% endif %}"
+                                class="w-full h-full object-cover {% if not form.instance.image %}opacity-60{% endif %}">
                             <div
                                 class="absolute top-3 right-3 bg-black/50 backdrop-blur-md px-2 py-1 rounded text-xs font-bold text-white">
                                 <i class="fas fa-star text-yellow-400 mr-1"></i> Featured
@@ -264,26 +274,38 @@
 
                         <div class="p-4">
                             <div class="flex justify-between items-start mb-2">
-                                <h3 id="preview-name" class="text-white font-bold text-lg leading-tight truncate">Event
-                                    Name</h3>
+                                <h3 id="preview-name" class="text-white font-bold text-lg leading-tight truncate">
+                                    {{ form.name.value|default:"Event Name" }}
+                                </h3>
                                 <div
                                     class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2 py-1 rounded border border-emerald-500/20">
-                                    <span id="preview-price">Free</span>
+                                    <span id="preview-price">
+                                        {% if form.ticket_price.value %}₹{{ form.ticket_price.value }}{% else %}Free{%
+                                        endif %}
+                                    </span>
                                 </div>
                             </div>
 
                             <div class="space-y-2 mb-4">
                                 <div class="flex items-center text-xs text-slate-400">
                                     <i class="far fa-calendar text-blue-400 w-5"></i>
-                                    <span id="preview-date">Date not set</span>
+                                    <span id="preview-date">
+                                        {% if form.date.value %}{{ form.date.value|date:"M j, Y" }}{% else %}Date not
+                                        set{% endif %}
+                                    </span>
                                 </div>
                                 <div class="flex items-center text-xs text-slate-400">
                                     <i class="fas fa-map-marker-alt text-rose-400 w-5"></i>
-                                    <span id="preview-location" class="truncate">Location not set</span>
+                                    <span id="preview-location" class="truncate">
+                                        {{ form.location.value|default:"Location not set" }}
+                                    </span>
                                 </div>
                                 <div class="flex items-center text-xs text-slate-400">
                                     <i class="fas fa-chair text-amber-400 w-5"></i>
-                                    <span id="preview-seats">0 seats</span>
+                                    <span id="preview-seats">
+                                        {{ form.available_seats.value|default:0 }} / {{ form.total_seats.value|default:0
+                                        }} seats
+                                    </span>
                                 </div>
                             </div>
 
@@ -310,11 +332,6 @@
                         <i class="fas fa-check-circle text-emerald-500 text-xs mt-1"></i>
                         <span class="text-xs text-slate-400 leading-relaxed">Keep the <strong>Event Name</strong> short
                             and catchy (under 50 chars).</span>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <i class="fas fa-check-circle text-emerald-500 text-xs mt-1"></i>
-                        <span class="text-xs text-slate-400 leading-relaxed">Set <strong>Available Seats</strong> lower
-                            than Total Seats if you want to reserve a buffer.</span>
                     </li>
                 </ul>
             </div>
@@ -375,7 +392,9 @@
 
         function updateDateTime() {
             if (dateInput.value) {
-                const d = new Date(dateInput.value);
+                // Fix for date parsing to avoid timezone issues
+                const parts = dateInput.value.split('-');
+                const d = new Date(parts[0], parts[1] - 1, parts[2]);
                 const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                 const timeStr = timeInput.value ? ` • ${timeInput.value}` : '';
                 previewDate.textContent = dateStr + timeStr;
@@ -413,11 +432,12 @@
         }
 
         // --- Defaults ---
-        // Set date min to today
-        if (dateInput) {
+        // Set date min to today ONLY if creating new event (empty value)
+        if (dateInput && !dateInput.value) {
             const today = new Date().toISOString().split('T')[0];
             dateInput.min = today;
         }
     });
 </script>
+{% endif %}
 {% endblock %}

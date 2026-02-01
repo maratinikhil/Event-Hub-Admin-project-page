@@ -1,0 +1,98 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Edit Booking #{{ booking.id }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+
+    <div class="flex items-center gap-4 mb-8">
+        <a href="{% url 'admin_movie_list' %}" title="Back to bookings"
+            class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold text-white">Edit Booking</h1>
+            <p class="text-slate-400 text-sm mt-1">Update status and payment details for ID #{{ booking.id }}</p>
+        </div>
+    </div>
+
+    <div class="bg-slate-900/50 border border-white/5 rounded-2xl overflow-hidden">
+
+        <div class="bg-black/20 p-6 border-b border-white/5 flex items-start gap-4">
+            <div class="w-12 h-12 rounded bg-slate-800 flex items-center justify-center text-slate-500">
+                <i class="fas fa-ticket-alt text-xl"></i>
+            </div>
+            <div>
+                <h3 class="text-white font-medium">{{ booking.movie.title }}</h3>
+                <p class="text-sm text-slate-400 mt-1">
+                    User: <span class="text-slate-300">{{ booking.user.username }}</span> •
+                    Date: <span class="text-slate-300">{{ booking.booked_at|date:"M d, Y" }}</span>
+                </p>
+            </div>
+        </div>
+
+        <form method="POST" action="" class="p-8 space-y-8">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-3">
+                    <label class="block text-sm font-medium text-slate-300">Payment Status</label>
+                    <div class="relative">
+                        <select name="payment_status" title="Payment Status"
+                            class="w-full bg-black/20 border border-white/10 text-white text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-3 appearance-none">
+                            <option value="on" {% if booking.payment_status %}selected{% endif %}>Paid (Completed)
+                            </option>
+                            <option value="off" {% if not booking.payment_status %}selected{% endif %}>Failed / Pending
+                            </option>
+                        </select>
+                        <div
+                            class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-500">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500">
+                        <i class="fas fa-info-circle mr-1"></i> Changing this manually overrides Razorpay data.
+                    </p>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="block text-sm font-medium text-slate-300">Booking Status</label>
+                    <div class="relative">
+                        <select name="status" title="Booking Status"
+                            class="w-full bg-black/20 border border-white/10 text-white text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-3 appearance-none">
+                            <option value="confirmed" {% if booking.status == 'confirmed' %}selected{% endif %}>Confirmed
+                            </option>
+                            <option value="pending" {% if booking.status == 'pending' %}selected{% endif %}>Pending
+                            </option>
+                            <option value="cancelled" {% if booking.status == 'cancelled' %}selected{% endif %}>Cancelled
+                            </option>
+                        </select>
+                        <div
+                            class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-500">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <label class="block text-sm font-medium text-slate-300">Admin Notes</label>
+                <textarea rows="3"
+                    class="w-full bg-black/20 border border-white/10 text-white text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-3 placeholder-slate-600"
+                    placeholder="Add any internal notes regarding this booking adjustment..."></textarea>
+            </div>
+
+            <div class="pt-6 border-t border-white/5 flex items-center justify-end gap-3">
+                <a href="{% url 'movies_booking_delete' %}"
+                    class="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="px-6 py-2.5 rounded-xl text-sm font-bold text-black bg-blue-500 hover:bg-blue-400 transition-all shadow-lg shadow-blue-500/20">
+                    <i class="fas fa-save mr-2"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

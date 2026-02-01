@@ -1,0 +1,93 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Book Movie{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold text-white">Book Tickets</h1>
+        <p class="text-slate-400 text-sm mt-1">Select a movie to proceed with booking.</p>
+    </div>
+
+    <div class="relative">
+        <input type="text" placeholder="Search movies..."
+            class="bg-slate-900/50 border border-white/10 rounded-xl px-4 py-2.5 pl-10 text-sm text-white focus:outline-none focus:border-purple-500/50 w-64">
+        <i class="fas fa-search absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+    </div>
+</div>
+
+{% if movies %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    {% for movie in movies %}
+    <div
+        class="group bg-slate-900/50 border border-white/5 rounded-2xl overflow-hidden hover:border-purple-500/30 transition-all hover:bg-slate-900/80 flex flex-col h-full">
+
+        <div class="relative h-64 overflow-hidden bg-black/40">
+            {% if movie.image %}
+            <img src="{{ movie.image.url }}" alt="{{ movie.title }}"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+            {% else %}
+            <div class="w-full h-full flex flex-col items-center justify-center text-slate-600">
+                <i class="fas fa-film text-4xl mb-2"></i>
+                <span class="text-xs">No Poster</span>
+            </div>
+            {% endif %}
+
+            <div
+                class="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-amber-400 px-2 py-1 rounded-lg text-xs font-bold border border-white/10 flex items-center gap-1">
+                <i class="fas fa-star text-[10px]"></i> {{ movie.rating }}
+            </div>
+
+            {% if movie.popularity == 'Hot' or movie.popularity == 'Trending' %}
+            <div
+                class="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-lg text-[10px] font-bold shadow-lg shadow-red-500/20">
+                {{ movie.popularity }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="p-5 flex-1 flex flex-col">
+            <h3 class="text-lg font-bold text-white mb-1 line-clamp-1" title="{{ movie.title }}">{{ movie.title }}</h3>
+            <div class="text-xs text-purple-400 font-medium mb-3">{{ movie.genre }} • {{ movie.language }}</div>
+
+            <div class="grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-slate-400 mb-4">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-calendar-alt text-slate-600"></i>
+                    <span>{{ movie.date|date:"M d, Y" }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-clock text-slate-600"></i>
+                    <span>{{ movie.time|time:"H:i A" }}</span>
+                </div>
+                <div class="flex items-center gap-2 col-span-2">
+                    <i class="fas fa-map-marker-alt text-slate-600"></i>
+                    <span class="truncate">{{ movie.location }}</span>
+                </div>
+            </div>
+
+            <div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between gap-3">
+                <div>
+                    <div class="text-[10px] text-slate-500 uppercase">Ticket Price</div>
+                    <div class="text-sm font-bold text-white">₹{{ movie.ticket_price }}</div>
+                </div>
+
+                <a href="{% url 'book_seat_selection' movie.id %}"
+                    class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition-all shadow-lg shadow-purple-900/20 active:scale-95 flex items-center gap-2">
+                    <span>Book Ticket</span>
+                    <i class="fas fa-arrow-right text-[10px]"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="flex flex-col items-center justify-center h-[60vh] text-slate-500">
+    <div class="w-20 h-20 rounded-full bg-slate-900/50 flex items-center justify-center mb-4 border border-white/5">
+        <i class="fas fa-ticket-alt text-3xl opacity-20"></i>
+    </div>
+    <h3 class="text-lg font-medium text-white mb-1">No Movies Available</h3>
+    <p class="text-sm opacity-60">There are currently no movies scheduled for booking.</p>
+</div>
+{% endif %}
+{% endblock %}

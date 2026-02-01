@@ -214,7 +214,7 @@ class BookingsEventAdmin(admin.ModelAdmin):
 
 @admin.register(TicketBooking)
 class TicketBookingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'movie', 'screen', 'grand_total', 'payment_status_display', 'booked_at')
+    list_display = ('id', 'user', 'movie', 'screen', 'grand_total', 'booked_at')
     list_filter = ('payment_status', 'booked_at')
     search_fields = ('user__email', 'movie__title', 'screen__screen_name')
     readonly_fields = ('razorpay_order_id', 'razorpay_payment_id', 'razorpay_signature')

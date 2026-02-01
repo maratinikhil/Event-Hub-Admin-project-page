@@ -1,263 +1,313 @@
-<div class="flex flex-col h-full text-slate-400 select-none">
+<aside
+    class="relative flex flex-col w-64 h-full bg-[#020617] border-r border-white/5 text-slate-400 select-none overflow-hidden font-sans">
 
-    <div class="h-20 flex items-center px-6 border-b border-white/5 bg-white/5 backdrop-blur-xl">
-        <a href="{% url 'admin_dashboard' %}"
-            class="flex items-center gap-3 w-full hover:opacity-80 transition-opacity duration-200">
+    <div class="absolute inset-0 z-0 pointer-events-none opacity-[0.03]"
+        style="background-image: url('data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' opacity=\'1\'/%3E%3C/svg%3E');">
+    </div>
+
+    <div class="relative z-10 h-20 flex items-center px-6 border-b border-white/5 bg-white/[0.02] backdrop-blur-md">
+        <a href="{% url 'admin_dashboard' %}" class="flex items-center gap-3 w-full group">
             <div
-                class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 shadow-lg shadow-sky-500/20">
-                <i class="fas fa-layer-group text-white text-lg"></i>
-                <div class="absolute inset-0 rounded-xl bg-white/20 blur-sm"></div>
+                class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 shadow-lg shadow-sky-500/20 ring-1 ring-white/10 group-hover:scale-105 transition-transform duration-300">
+                <i class="fas fa-layer-group text-white text-sm"></i>
+                <div class="absolute inset-0 rounded-xl bg-gradient-to-t from-transparent to-white/20"></div>
             </div>
-            <div>
-                <h1 class="text-lg font-bold text-white tracking-tight">EventAdmin</h1>
-                <p class="text-xs text-sky-400/80 font-medium">Pro Dashboard</p>
+            <div class="flex flex-col">
+                <h1 class="text-base font-bold text-slate-100 tracking-tight leading-tight">EventAdmin</h1>
+                <p class="text-[11px] text-sky-500 font-medium tracking-wide uppercase">Pro Dashboard</p>
             </div>
         </a>
     </div>
 
-    <nav class="flex-1 overflow-y-auto custom-scrollbar py-6 px-4 space-y-2">
+    <nav class="relative z-10 flex-1 overflow-y-auto custom-scrollbar py-6 px-3 space-y-1">
 
-        <a href="{% url 'admin_dashboard' %}" class="flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden
+        <a href="{% url 'admin_dashboard' %}" class="relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group mb-6
            {% if request.resolver_match.url_name == 'admin_dashboard' %}
-             bg-sky-500/10 text-sky-400 border border-sky-500/20
+             bg-sky-500/10 text-sky-400 ring-1 ring-sky-500/20 shadow-[0_0_15px_rgba(14,165,233,0.1)]
            {% else %}
-             hover:bg-white/5 hover:text-white border border-transparent
+             hover:bg-white/5 hover:text-slate-200
            {% endif %}">
-        
-            <i class="fas fa-home w-5 text-center 
-               {% if request.resolver_match.url_name == 'admin_dashboard' %}
-                   text-sky-400
-               {% else %}
-                   text-slate-500 group-hover:text-sky-400
-               {% endif %}">
+
+            <i
+                class="fas fa-grid-2 w-5 text-center transition-colors duration-200
+               {% if request.resolver_match.url_name == 'admin_dashboard' %} text-sky-400 {% else %} text-slate-500 group-hover:text-slate-300 {% endif %}">
             </i>
-        
             <span class="font-medium text-sm">Dashboard</span>
-        
+
             {% if request.resolver_match.url_name == 'admin_dashboard' %}
-            <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.5)]"></div>
+            <div class="absolute right-3 w-1.5 h-1.5 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]">
+            </div>
             {% endif %}
         </a>
-        <div class="px-3 mt-6 mb-2 flex items-center justify-between">
-            <span class="text-[10px] uppercase tracking-widest font-bold text-slate-600">Management</span>
-            <span class="h-px w-full bg-white/5 ml-3"></span>
+
+        <div class="px-3 mb-3 mt-2 flex items-center gap-3">
+            <span class="text-[10px] uppercase tracking-widest font-bold text-slate-600/80">Management</span>
+            <span class="h-px flex-1 bg-gradient-to-r from-white/5 to-transparent"></span>
         </div>
 
-        <div class="relative">
+        <div class="accordion-group relative">
             <button id="events-toggle"
-                class="w-full flex items-center justify-between px-3 py-3 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-200 group">
+                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-white/5 transition-all duration-200 group cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/20 group-hover:border-blue-500/50 transition-colors">
-                        <i class="fas fa-briefcase text-blue-400 text-xs"></i>
+                        class="w-7 h-7 rounded-md bg-blue-500/10 flex items-center justify-center ring-1 ring-blue-500/20 group-hover:ring-blue-500/40 transition-all">
+                        <i class="fas fa-briefcase text-blue-400 text-[10px]"></i>
                     </div>
-                    <span class="text-sm font-medium">Business Events</span>
+                    <span class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Business
+                        Events</span>
                 </div>
                 <i
-                    class="fas fa-chevron-right text-[10px] text-slate-600 transition-transform duration-300 group-hover:text-blue-400 icon-arrow"></i>
+                    class="fas fa-chevron-right text-[10px] text-slate-600 transition-transform duration-300 icon-arrow group-hover:text-slate-400"></i>
             </button>
 
-            <div id="events-menu" class="hidden overflow-hidden transition-all duration-300 ease-in-out">
-                <div class="mt-1 mx-2 p-2 bg-black/20 rounded-xl border border-white/5 space-y-1">
-                    <a href="{% url 'admin_event_bookings' %}"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-blue-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500/50"></span> Bookings
-                    </a>
-                    <a href="{% url 'admin_create_event' %}"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-green-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-green-500/50"></span> Create Event
-                    </a>
-                    <a href="{% url 'admin_events_list' %}"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-purple-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500/50"></span> All Events
-                    </a>
-                    <a href="{% url 'event_book' %}"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-yellow-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-yellow-500/50"></span> Book Event
-                    </a>
+            <div id="events-menu" class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out">
+                <div class="overflow-hidden">
+                    <div class="pl-4 pr-2 py-2 space-y-0.5 border-l border-white/5 ml-6 mt-1">
+                        <a href="{% url 'admin_event_bookings' %}"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-blue-300 hover:bg-blue-500/5 transition-colors">
+                            Bookings
+                        </a>
+                        <a href="{% url 'admin_create_event' %}"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-blue-300 hover:bg-blue-500/5 transition-colors">
+                            Create Event
+                        </a>
+                        <a href="{% url 'admin_events_list' %}"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-blue-300 hover:bg-blue-500/5 transition-colors">
+                            All Events
+                        </a>
+                        <a href="{% url 'event_book' %}"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-blue-300 hover:bg-blue-500/5 transition-colors">
+                            Book Event
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="relative">
+        <div class="accordion-group relative mt-1">
             <button id="movies-toggle"
-                class="w-full flex items-center justify-between px-3 py-3 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-200 group">
+                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-white/5 transition-all duration-200 group cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center border border-purple-500/20 group-hover:border-purple-500/50 transition-colors">
-                        <i class="fas fa-film text-purple-400 text-xs"></i>
+                        class="w-7 h-7 rounded-md bg-purple-500/10 flex items-center justify-center ring-1 ring-purple-500/20 group-hover:ring-purple-500/40 transition-all">
+                        <i class="fas fa-film text-purple-400 text-[10px]"></i>
                     </div>
-                    <span class="text-sm font-medium">Movies</span>
+                    <span
+                        class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Movies</span>
                 </div>
                 <i
-                    class="fas fa-chevron-right text-[10px] text-slate-600 transition-transform duration-300 group-hover:text-purple-400 icon-arrow"></i>
+                    class="fas fa-chevron-right text-[10px] text-slate-600 transition-transform duration-300 icon-arrow group-hover:text-slate-400"></i>
             </button>
 
-            <div id="movies-menu" class="hidden overflow-hidden">
-                <div class="mt-1 mx-2 p-2 bg-black/20 rounded-xl border border-white/5 space-y-1">
-                    <a href="/admin/eventapp/movie/"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-purple-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500/50"></span> Catalog
-                    </a>
-                    <a href="/admin/eventapp/moviescreen/"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-purple-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500/50"></span> Screens
-                    </a>
-                    <a href="/admin/eventapp/theaterseat/"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-purple-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500/50"></span> Seats
-                    </a>
-                    <a href="/admin/eventapp/movieticketbooking/"
-                        class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-purple-300 transition-colors text-slate-400">
-                        <div class="flex items-center gap-3"><span
-                                class="w-1.5 h-1.5 rounded-full bg-purple-500/50"></span> Bookings</div>
-                        <span class="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded">128</span>
-                    </a>
+            <div id="movies-menu" class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out">
+                <div class="overflow-hidden">
+                    <div class="pl-4 pr-2 py-2 space-y-0.5 border-l border-white/5 ml-6 mt-1">
+                        <a href="{% url 'admin_movie_screen' %}"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-purple-300 hover:bg-purple-500/5 transition-colors">
+                            Movie Screen
+                        </a>
+                        <a href="{% url 'admin_movie_list' %}"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-purple-300 hover:bg-purple-500/5 transition-colors">
+                            Movies
+                        </a>
+                        <a href="{% url 'movie_bookings_list' %}"
+                            class="flex items-center justify-between px-3 py-2 rounded-md text-sm text-slate-400 hover:text-purple-300 hover:bg-purple-500/5 transition-colors">
+                            <span>Bookings</span>
+                        </a>
+                        <a href="{% url 'book_movie' %}"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-purple-300 hover:bg-purple-500/5 transition-colors">
+                            Book Movie
+                        </a>
+                        <a href="{% url 'add_movie' %}"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-purple-300 hover:bg-purple-500/5 transition-colors">
+                            Add Movie
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="relative">
+        <div class="accordion-group relative mt-1">
             <button id="comedy-toggle"
-                class="w-full flex items-center justify-between px-3 py-3 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-200 group">
+                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-white/5 transition-all duration-200 group cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20 group-hover:border-amber-500/50 transition-colors">
-                        <i class="fas fa-masks-theater text-amber-400 text-xs"></i>
+                        class="w-7 h-7 rounded-md bg-amber-500/10 flex items-center justify-center ring-1 ring-amber-500/20 group-hover:ring-amber-500/40 transition-all">
+                        <i class="fas fa-masks-theater text-amber-400 text-[10px]"></i>
                     </div>
-                    <span class="text-sm font-medium">Comedy</span>
+                    <span
+                        class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Comedy</span>
                 </div>
                 <i
-                    class="fas fa-chevron-right text-[10px] text-slate-600 transition-transform duration-300 group-hover:text-amber-400 icon-arrow"></i>
+                    class="fas fa-chevron-right text-[10px] text-slate-600 transition-transform duration-300 icon-arrow group-hover:text-slate-400"></i>
             </button>
 
-            <div id="comedy-menu" class="hidden overflow-hidden">
-                <div class="mt-1 mx-2 p-2 bg-black/20 rounded-xl border border-white/5 space-y-1">
-                    <a href="/admin/eventapp/comedyshow/"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-amber-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500/50"></span> Shows
-                    </a>
-                    <a href="/admin/eventapp/comedyshowbooking/"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-amber-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500/50"></span> Bookings
-                    </a>
+            <div id="comedy-menu" class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out">
+                <div class="overflow-hidden">
+                    <div class="pl-4 pr-2 py-2 space-y-0.5 border-l border-white/5 ml-6 mt-1">
+                        <a href="{% url 'comedy_shows_list' %}"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-amber-300 hover:bg-amber-500/5 transition-colors">
+                            Shows
+                        </a>
+                        <a href="{% url 'comedy_bookings' %}"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-amber-300 hover:bg-amber-500/5 transition-colors">
+                            Bookings
+                        </a>
+                        <a href="{% url 'add_comedy_show' %}"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-amber-300 hover:bg-amber-500/5 transition-colors">
+                            Add Comedy Show
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="relative">
+        <div class="accordion-group relative mt-1">
             <button id="concerts-toggle"
-                class="w-full flex items-center justify-between px-3 py-3 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-200 group">
+                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-white/5 transition-all duration-200 group cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:border-emerald-500/50 transition-colors">
-                        <i class="fas fa-music text-emerald-400 text-xs"></i>
+                        class="w-7 h-7 rounded-md bg-emerald-500/10 flex items-center justify-center ring-1 ring-emerald-500/20 group-hover:ring-emerald-500/40 transition-all">
+                        <i class="fas fa-music text-emerald-400 text-[10px]"></i>
                     </div>
-                    <span class="text-sm font-medium">Concerts</span>
+                    <span
+                        class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Concerts</span>
                 </div>
                 <i
-                    class="fas fa-chevron-right text-[10px] text-slate-600 transition-transform duration-300 group-hover:text-emerald-400 icon-arrow"></i>
+                    class="fas fa-chevron-right text-[10px] text-slate-600 transition-transform duration-300 icon-arrow group-hover:text-slate-400"></i>
             </button>
 
-            <div id="concerts-menu" class="hidden overflow-hidden">
-                <div class="mt-1 mx-2 p-2 bg-black/20 rounded-xl border border-white/5 space-y-1">
-                    <a href="/admin/eventapp/liveconcert/"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-emerald-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500/50"></span> All Concerts
-                    </a>
-                    <a href="/admin/eventapp/liveconcertbooking/"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-emerald-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500/50"></span> Bookings
-                    </a>
+            <div id="concerts-menu" class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out">
+                <div class="overflow-hidden">
+                    <div class="pl-4 pr-2 py-2 space-y-0.5 border-l border-white/5 ml-6 mt-1">
+                        <a href="/admin/eventapp/liveconcert/"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-emerald-300 hover:bg-emerald-500/5 transition-colors">
+                            All Concerts
+                        </a>
+                        <a href="/admin/eventapp/liveconcertbooking/"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-emerald-300 hover:bg-emerald-500/5 transition-colors">
+                            Bookings
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="relative">
+        <div class="accordion-group relative mt-1">
             <button id="amusement-toggle"
-                class="w-full flex items-center justify-between px-3 py-3 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-200 group">
+                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-white/5 transition-all duration-200 group cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center border border-rose-500/20 group-hover:border-rose-500/50 transition-colors">
-                        <i class="fas fa-rocket text-rose-400 text-xs"></i>
+                        class="w-7 h-7 rounded-md bg-rose-500/10 flex items-center justify-center ring-1 ring-rose-500/20 group-hover:ring-rose-500/40 transition-all">
+                        <i class="fas fa-rocket text-rose-400 text-[10px]"></i>
                     </div>
-                    <span class="text-sm font-medium">Amusement</span>
+                    <span
+                        class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Amusement</span>
                 </div>
                 <i
-                    class="fas fa-chevron-right text-[10px] text-slate-600 transition-transform duration-300 group-hover:text-rose-400 icon-arrow"></i>
+                    class="fas fa-chevron-right text-[10px] text-slate-600 transition-transform duration-300 icon-arrow group-hover:text-slate-400"></i>
             </button>
 
-            <div id="amusement-menu" class="hidden overflow-hidden">
-                <div class="mt-1 mx-2 p-2 bg-black/20 rounded-xl border border-white/5 space-y-1">
-                    <a href="/admin/eventapp/amusementpark/"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-rose-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500/50"></span> Locations
-                    </a>
-                    <a href="/admin/eventapp/amusementticket/"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-rose-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500/50"></span> Tickets
-                    </a>
-                    <a href="/admin/eventapp/amusementbooking/"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-rose-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500/50"></span> Bookings
-                    </a>
+            <div id="amusement-menu" class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out">
+                <div class="overflow-hidden">
+                    <div class="pl-4 pr-2 py-2 space-y-0.5 border-l border-white/5 ml-6 mt-1">
+                        <a href="/admin/eventapp/amusementpark/"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-rose-300 hover:bg-rose-500/5 transition-colors">
+                            Locations
+                        </a>
+                        <a href="/admin/eventapp/amusementticket/"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-rose-300 hover:bg-rose-500/5 transition-colors">
+                            Tickets
+                        </a>
+                        <a href="/admin/eventapp/amusementbooking/"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-rose-300 hover:bg-rose-500/5 transition-colors">
+                            Bookings
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="px-3 mt-6 mb-2 flex items-center justify-between">
-            <span class="text-[10px] uppercase tracking-widest font-bold text-slate-600">Analytics</span>
-            <span class="h-px w-full bg-white/5 ml-3"></span>
+        <div class="px-3 mb-3 mt-6 flex items-center gap-3">
+            <span class="text-[10px] uppercase tracking-widest font-bold text-slate-600/80">Analytics</span>
+            <span class="h-px flex-1 bg-gradient-to-r from-white/5 to-transparent"></span>
         </div>
 
-        <div class="relative">
+        <div class="accordion-group relative">
             <button id="analytics-toggle"
-                class="w-full flex items-center justify-between px-3 py-3 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-200 group">
+                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-white/5 transition-all duration-200 group cursor-pointer select-none">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 group-hover:border-cyan-500/50 transition-colors">
-                        <i class="fas fa-chart-pie text-cyan-400 text-xs"></i>
+                        class="w-7 h-7 rounded-md bg-cyan-500/10 flex items-center justify-center ring-1 ring-cyan-500/20 group-hover:ring-cyan-500/40 transition-all">
+                        <i class="fas fa-chart-pie text-cyan-400 text-[10px]"></i>
                     </div>
-                    <span class="text-sm font-medium">Reports</span>
+                    <span
+                        class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Reports</span>
                 </div>
                 <i
-                    class="fas fa-chevron-right text-[10px] text-slate-600 transition-transform duration-300 group-hover:text-cyan-400 icon-arrow"></i>
+                    class="fas fa-chevron-right text-[10px] text-slate-600 transition-transform duration-300 icon-arrow group-hover:text-slate-400"></i>
             </button>
 
-            <div id="analytics-menu" class="hidden overflow-hidden">
-                <div class="mt-1 mx-2 p-2 bg-black/20 rounded-xl border border-white/5 space-y-1">
-                    <a href="/admin-panel/reports/events/"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-cyan-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-500/50"></span> Events
-                    </a>
-                    <a href="/admin-panel/reports/bookings/"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-cyan-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-500/50"></span> Bookings
-                    </a>
-                    <a href="/admin-panel/reports/revenue/"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-sm hover:text-cyan-300 transition-colors text-slate-400">
-                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-500/50"></span> Revenue
-                    </a>
+            <div id="analytics-menu" class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out">
+                <div class="overflow-hidden">
+                    <div class="pl-4 pr-2 py-2 space-y-0.5 border-l border-white/5 ml-6 mt-1">
+                        <a href="/admin-panel/reports/events/"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-cyan-300 hover:bg-cyan-500/5 transition-colors">
+                            Events
+                        </a>
+                        <a href="/admin-panel/reports/bookings/"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-cyan-300 hover:bg-cyan-500/5 transition-colors">
+                            Bookings
+                        </a>
+                        <a href="/admin-panel/reports/revenue/"
+                            class="block px-3 py-2 rounded-md text-sm text-slate-400 hover:text-cyan-300 hover:bg-cyan-500/5 transition-colors">
+                            Revenue
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="mt-8 pt-4 border-t border-white/5">
-            <a href="/admin-panel/logout/"
-                class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 group border border-transparent hover:border-red-500/20">
-                <div
-                    class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-500/5 text-slate-500 group-hover:text-red-400 group-hover:bg-red-500/20 transition-all">
-                    <i class="fas fa-power-off"></i>
-                </div>
-                <span class="font-medium text-sm">Logout System</span>
-            </a>
-        </div>
     </nav>
-</div>
+
+    <div class="relative z-10 px-4 py-4 border-t border-white/5 bg-black/20">
+        <a href="/admin-panel/logout/"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg group transition-all duration-200 hover:bg-red-500/10 border border-transparent hover:border-red-500/20">
+            <div
+                class="w-8 h-8 flex items-center justify-center rounded-md bg-white/5 text-slate-500 group-hover:text-red-400 group-hover:bg-red-500/20 transition-all">
+                <i class="fas fa-power-off text-xs"></i>
+            </div>
+            <div>
+                <span
+                    class="block text-sm font-medium text-slate-300 group-hover:text-red-100 transition-colors">Logout</span>
+                <span class="block text-[10px] text-slate-600 group-hover:text-red-400/70">End Session</span>
+            </div>
+        </a>
+    </div>
+</aside>
+
+<style>
+    /* Thin, dark scrollbar to match theme */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-
         function setupAccordion(toggleId, menuId) {
             const toggle = document.getElementById(toggleId);
             const menu = document.getElementById(menuId);
@@ -265,22 +315,28 @@
             if (!toggle || !menu) return;
 
             toggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const isHidden = menu.classList.contains('hidden');
+                e.preventDefault(); // Stop default button behavior
+
+                const isOpen = menu.classList.contains('grid-rows-[1fr]');
                 const icon = toggle.querySelector('.icon-arrow');
 
-                // 1. Close all other menus (Accordion behavior)
-                // Optional: Remove this block if you want multiple menus open at once
-                document.querySelectorAll('[id$="-menu"]').forEach(el => el.classList.add('hidden'));
-                document.querySelectorAll('.icon-arrow').forEach(el => el.classList.remove('rotate-90'));
+                // 1. Close ALL other menus (Accordion behavior)
+                // If you want multiple open, comment out this section
+                document.querySelectorAll('[id$="-menu"]').forEach(el => {
+                    el.classList.remove('grid-rows-[1fr]');
+                    el.classList.add('grid-rows-[0fr]');
+                });
+                document.querySelectorAll('.icon-arrow').forEach(el => {
+                    el.classList.remove('rotate-90');
+                });
 
-                // 2. Toggle current menu
-                if (isHidden) {
-                    menu.classList.remove('hidden');
+                // 2. Toggle CURRENT menu
+                // Note: The logic above closes everything, so we only need to open if it wasn't open before.
+                // If you remove the "close all" block, you need standard toggle logic here.
+                if (!isOpen) {
+                    menu.classList.remove('grid-rows-[0fr]');
+                    menu.classList.add('grid-rows-[1fr]');
                     if (icon) icon.classList.add('rotate-90');
-                } else {
-                    menu.classList.add('hidden');
-                    if (icon) icon.classList.remove('rotate-90');
                 }
             });
         }

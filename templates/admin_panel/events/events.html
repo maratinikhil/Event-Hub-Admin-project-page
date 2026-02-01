@@ -42,12 +42,14 @@
         </div>
 
         <div class="flex gap-3">
-            <div class="relative group">
-                <i
-                    class="fas fa-search absolute left-3 top-3 text-slate-500 group-focus-within:text-blue-400 transition-colors"></i>
-                <input type="text" placeholder="Search events..."
+            <form method="GET" action="" class="relative group">
+                <button type="submit"
+                    class="absolute left-3 top-3 text-slate-500 group-focus-within:text-blue-400 transition-colors">
+                    <i class="fas fa-search"></i>
+                </button>
+                <input type="text" name="search" value="{{ search_query|default:'' }}" placeholder="Search events..."
                     class="glass-input pl-10 pr-4 py-2.5 rounded-xl w-64 text-sm transition-all">
-            </div>
+            </form>
 
             <a href="{% url 'admin_create_event' %}"
                 class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all transform hover:-translate-y-0.5">
@@ -130,8 +132,11 @@
                                 <div>
                                     <div
                                         class="font-bold text-white text-sm group-hover:text-blue-400 transition-colors">
-                                        {{ event.name }}</div>
-                                    <div class="text-xs text-slate-500 mt-0.5 max-w-[150px] truncate">{{ event.description|truncatechars:40 }}</div>
+                                        {{ event.name }}
+                                    </div>
+                                    <div class="text-xs text-slate-500 mt-0.5 max-w-[150px] truncate">
+                                        {{ event.description|truncatechars:40 }}
+                                    </div>
                                 </div>
                             </div>
                         </td>
@@ -147,7 +152,7 @@
                         </td>
 
                         <td class="px-6 py-4">
-                            <span class="text-sm font-bold text-emerald-400">₹{{ event.ticket_price|floatformat:2|intcomma }}</span>
+                            <span class="text-sm font-bold text-emerald-400">₹{{ event.ticket_price|floatformat:0|intcomma }}</span>
                         </td>
 
                         <td class="px-6 py-4">
@@ -174,17 +179,19 @@
                                 class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
                                 <a href="{% url 'admin_event_detail' event.id %}"
                                     class="p-1.5 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 text-slate-400 transition-colors"
-                                    title="View">
+                                    title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </a>
+
                                 <a href="{% url 'edit_event' event.id %}"
                                     class="p-1.5 rounded-lg hover:bg-emerald-500/20 hover:text-emerald-400 text-slate-400 transition-colors"
-                                    title="Edit">
+                                    title="Edit Event">
                                     <i class="fas fa-pen"></i>
                                 </a>
-                                <button
-                                    class="p-1.5 rounded-lg hover:bg-red-500/20 hover:text-red-400 text-slate-400 transition-colors"
-                                    title="Delete">
+
+                                <button type="button"
+                                    class="p-1.5 rounded-lg hover:bg-red-500/20 hover:text-red-400 text-slate-400 transition-colors delete-btn"
+                                    data-id="{{ event.id }}" data-name="{{ event.name }}" title="Delete Event">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -211,4 +218,84 @@
         </div>
     </div>
 </div>
+
+<div id="deleteModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity opacity-0" id="modalBackdrop"></div>
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="relative w-full max-w-md bg-[#0f172a] border border-white/10 rounded-2xl shadow-2xl transform scale-95 opacity-0 transition-all duration-300"
+            id="modalContent">
+            <div class="p-6 text-center">
+                <div
+                    class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
+                    <i class="fas fa-exclamation-triangle text-2xl text-red-500"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Delete Event?</h3>
+                <p class="text-slate-400 text-sm mb-6">
+                    Are you sure you want to delete <span id="deleteName" class="text-white font-bold"></span>?
+                    <br>This action cannot be undone.
+                </p>
+
+                <form id="deleteForm" method="POST" action="">
+                    {% csrf_token %}
+                    <div class="flex gap-3 justify-center">
+                        <button type="button" id="cancelDelete"
+                            class="px-5 py-2.5 rounded-xl border border-white/10 text-slate-300 hover:bg-white/5 text-sm font-medium transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-bold shadow-lg shadow-red-500/20 transition-colors">
+                            Delete Event
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Modal Logic
+        const deleteModal = document.getElementById('deleteModal');
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const modalContent = document.getElementById('modalContent');
+        const deleteNameSpan = document.getElementById('deleteName');
+        const deleteForm = document.getElementById('deleteForm');
+
+        function openModal() {
+            deleteModal.classList.remove('hidden');
+            setTimeout(() => {
+                modalBackdrop.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            modalBackdrop.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                deleteModal.classList.add('hidden');
+            }, 300);
+        }
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const eventId = this.dataset.id;
+                const eventName = this.dataset.name;
+
+                deleteNameSpan.textContent = eventName;
+                // Construct the delete URL dynamically
+                deleteForm.action = `/admin-panel/events/${eventId}/delete/`;
+                openModal();
+            });
+        });
+
+        document.getElementById('cancelDelete').addEventListener('click', closeModal);
+
+        // Close on backdrop click
+        modalBackdrop.addEventListener('click', closeModal);
+    });
+</script>
 {% endblock %}

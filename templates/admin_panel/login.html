@@ -12,37 +12,31 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
                         brand: {
                             50: '#f0f9ff',
-                            500: '#0ea5e9', // Sky blue
+                            500: '#0ea5e9',
                             600: '#0284c7',
                             900: '#0c4a6e',
                         }
                     },
                     animation: {
-                        'blob': 'blob 10s infinite',
                         'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                        },
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
+                            '50%': { transform: 'translateY(-10px)' },
                         }
                     }
                 }
@@ -52,177 +46,163 @@
 
     <style>
         body {
-            background-color: #0f172a;
-            /* Slate 900 */
+            background-color: #020617;
+            /* Slate 950 */
+            color: #e2e8f0;
             overflow: hidden;
         }
 
-        /* The Moving Gradients Background */
-        .ambient-light {
+        /* 1. Grainy Noise Overlay - The "Lovable" Texture */
+        .noise-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
-            z-index: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            opacity: 0.07;
             pointer-events: none;
+            z-index: 10;
         }
 
-        .orb {
+        /* 2. Premium Glass Card */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow:
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            /* Top highlight */
+        }
+
+        /* 3. Ambient Glows */
+        .glow-orb {
             position: absolute;
             border-radius: 50%;
             filter: blur(80px);
-            opacity: 0.6;
-            animation: blob 15s infinite alternate;
-        }
-
-        .orb-1 {
-            top: -10%;
-            left: -10%;
-            width: 50vw;
-            height: 50vw;
-            background: #4f46e5;
-            animation-delay: 0s;
-        }
-
-        .orb-2 {
-            bottom: -10%;
-            right: -10%;
-            width: 50vw;
-            height: 50vw;
-            background: #0ea5e9;
-            animation-delay: 2s;
-        }
-
-        .orb-3 {
-            top: 40%;
-            left: 40%;
-            width: 30vw;
-            height: 30vw;
-            background: #ec4899;
-            animation-delay: 4s;
             opacity: 0.4;
+            z-index: 0;
         }
 
-        /* Glass Card */
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Input Styling */
+        /* 4. Input Styling */
         .custom-input {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #e2e8f0;
-            transition: all 0.3s ease;
+            background: rgba(2, 6, 23, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: white;
+            transition: all 0.2s ease;
         }
 
         .custom-input:focus {
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(2, 6, 23, 0.8);
             border-color: #38bdf8;
-            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+            /* Sky 400 */
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
         }
 
         .custom-input:-webkit-autofill,
         .custom-input:-webkit-autofill:hover,
         .custom-input:-webkit-autofill:focus {
-            -webkit-text-fill-color: #e2e8f0;
-            -webkit-box-shadow: 0 0 0px 1000px #0f172a inset;
+            -webkit-text-fill-color: white;
+            -webkit-box-shadow: 0 0 0px 1000px #020617 inset;
             transition: background-color 5000s ease-in-out 0s;
         }
     </style>
 </head>
 
-<body class="antialiased min-h-screen flex items-center justify-center relative font-sans text-slate-200">
+<body class="antialiased min-h-screen flex items-center justify-center relative font-sans selection:bg-sky-500/30">
 
-    <div class="ambient-light">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="glow-orb w-[500px] h-[500px] bg-indigo-600 top-[-10%] left-[-10%] animate-pulse-slow"></div>
+        <div class="glow-orb w-[600px] h-[600px] bg-sky-600 bottom-[-10%] right-[-10%] animate-pulse-slow"
+            style="animation-delay: 2s;"></div>
+        <div
+            class="glow-orb w-[300px] h-[300px] bg-fuchsia-600 top-[40%] left-[50%] transform -translate-x-1/2 opacity-20">
+        </div>
     </div>
 
-    <div
-        class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 z-0 pointer-events-none">
-    </div>
+    <div class="noise-overlay"></div>
 
-    <div class="relative z-10 w-full max-w-md px-6 animate-float">
+    <div class="relative z-20 w-full max-w-sm px-4 animate-float">
 
         <div class="text-center mb-8">
             <div
-                class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/30 mb-4">
+                class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 shadow-lg shadow-sky-500/20 mb-4 ring-1 ring-white/20">
                 <i class="fas fa-shield-alt text-2xl text-white"></i>
             </div>
-            <h1 class="text-3xl font-bold tracking-tight text-white mb-2">Welcome Back</h1>
-            <p class="text-slate-400">Enter your credentials to access the dashboard</p>
+            <h1 class="text-2xl font-bold tracking-tight text-white">Welcome Back</h1>
+            <p class="text-slate-400 text-sm mt-2">Enter your credentials to access the dashboard</p>
         </div>
 
-        <div class="glass-panel rounded-3xl p-8 md:p-10">
+        <div class="glass-panel rounded-2xl p-8 w-full">
 
             {% if form.non_field_errors %}
-            <div class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-start gap-3">
-                <i class="fas fa-circle-exclamation text-red-400 mt-1"></i>
-                <div class="text-sm text-red-200">
+            <div class="mb-6 p-3 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3">
+                <i class="fas fa-circle-exclamation text-red-400 mt-0.5 text-sm"></i>
+                <div class="text-xs text-red-200">
                     {{ form.non_field_errors }}
                 </div>
             </div>
             {% endif %}
 
-            <form method="POST" action="{% url 'admin_login' %}" id="loginForm" class="space-y-6">
+            <form method="POST" action="{% url 'admin_login' %}" id="loginForm" class="space-y-5">
                 {% csrf_token %}
 
-                <div class="space-y-2">
-                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-400 ml-1">Username</label>
+                <div class="space-y-1.5">
+                    <label
+                        class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 ml-1">Username</label>
                     <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                             <i
-                                class="fas fa-user text-slate-500 group-focus-within:text-cyan-400 transition-colors"></i>
+                                class="fas fa-user text-slate-500 text-sm group-focus-within:text-sky-400 transition-colors"></i>
                         </div>
                         <input type="text" name="username" required
-                            class="custom-input w-full pl-11 pr-4 py-3.5 rounded-xl outline-none"
+                            class="custom-input w-full pl-10 pr-4 py-2.5 rounded-lg text-sm outline-none placeholder-slate-500"
                             placeholder="admin@company.com" autocomplete="username">
                     </div>
                 </div>
 
-                <div class="space-y-2">
-                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-400 ml-1">Password</label>
+                <div class="space-y-1.5">
+                    <label
+                        class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 ml-1">Password</label>
                     <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                             <i
-                                class="fas fa-lock text-slate-500 group-focus-within:text-cyan-400 transition-colors"></i>
+                                class="fas fa-lock text-slate-500 text-sm group-focus-within:text-sky-400 transition-colors"></i>
                         </div>
                         <input type="password" name="password" id="password" required
-                            class="custom-input w-full pl-11 pr-12 py-3.5 rounded-xl outline-none"
+                            class="custom-input w-full pl-10 pr-10 py-2.5 rounded-lg text-sm outline-none placeholder-slate-500"
                             placeholder="••••••••" autocomplete="current-password">
 
                         <button type="button" id="togglePassword"
-                            class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-white transition-colors cursor-pointer outline-none">
-                            <i class="fas fa-eye"></i>
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300 transition-colors cursor-pointer outline-none">
+                            <i class="fas fa-eye text-xs"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between text-sm">
-                    <label class="flex items-center space-x-2 cursor-pointer group">
+                <div class="flex items-center justify-between text-xs pt-1">
+                    <label class="flex items-center space-x-2 cursor-pointer group select-none">
                         <input type="checkbox" name="remember"
-                            class="w-4 h-4 rounded border-slate-600 bg-slate-700 text-cyan-500 focus:ring-offset-slate-900 focus:ring-cyan-500">
-                        <span class="text-slate-400 group-hover:text-slate-200 transition-colors">Keep me signed
+                            class="w-3.5 h-3.5 rounded border-slate-600 bg-slate-800 text-sky-500 focus:ring-offset-slate-900 focus:ring-sky-500/50">
+                        <span class="text-slate-400 group-hover:text-slate-300 transition-colors">Keep me signed
                             in</span>
                     </label>
-                    <a href="#" class="text-cyan-400 hover:text-cyan-300 font-medium transition-colors">Forgot
+                    <a href="#"
+                        class="text-sky-400 hover:text-sky-300 font-medium transition-colors hover:underline">Forgot
                         password?</a>
                 </div>
 
                 <button type="submit" id="submitBtn"
-                    class="group relative w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl text-white font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-cyan-500 shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:scale-[1.02]">
-                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                        <i class="fas fa-arrow-right text-cyan-200 group-hover:translate-x-1 transition-transform"></i>
+                    class="group relative w-full flex justify-center py-2.5 px-4 rounded-lg text-white text-sm font-semibold bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-sky-500 shadow-lg shadow-sky-500/25 transition-all duration-200 active:scale-[0.98] mt-2">
+
+                    <span id="btnText" class="flex items-center gap-2">
+                        Sign In to Dashboard
+                        <i
+                            class="fas fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform opacity-70"></i>
                     </span>
-                    <span id="btnText">Sign In to Dashboard</span>
 
                     <svg id="btnSpinner" class="hidden animate-spin h-5 w-5 text-white"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -236,7 +216,7 @@
             </form>
         </div>
 
-        <p class="mt-8 text-center text-xs text-slate-500">
+        <p class="mt-8 text-center text-[10px] text-slate-600 uppercase tracking-widest font-semibold">
             &copy; {% now "Y" %} EventAdmin Pro. Secured by 256-bit encryption.
         </p>
     </div>
@@ -263,7 +243,7 @@
 
             form.addEventListener('submit', () => {
                 btn.disabled = true;
-                btn.classList.add('opacity-75', 'cursor-not-allowed');
+                btn.classList.add('opacity-80', 'cursor-not-allowed');
                 btnText.classList.add('hidden');
                 btnSpinner.classList.remove('hidden');
             });
