@@ -1,6 +1,6 @@
 # admin_panel/forms.py
 from django import forms
-from .models import Event, Movie, LiveConcert
+from .models import Event, Movie, LiveConcert, ComedyShow
 
 from django import forms
 from .models import Event
@@ -56,3 +56,9 @@ class ConcertForm(forms.ModelForm):
             'time': forms.TimeInput(attrs={'type': 'time'}),
             'description': forms.Textarea(attrs={'rows': 4}),
         }
+
+
+class ComedyShowForm(forms.ModelForm):
+    class Meta:
+        model = ComedyShow
+        fields = '__all__' # or list specific fields like ['title', 'date', 'image']

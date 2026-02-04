@@ -11,7 +11,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Count, Sum, Q, Avg
 from django.utils.dateparse import parse_duration  
 from .models import Event, BookingsEvent, Movie, User, MovieScreen, TheaterSeat, TicketBooking, ComedyShow, BookingComedyShow
-from .forms import EventForm, MovieForm
+from .forms import EventForm, MovieForm,ComedyShowForm
 import uuid
 import string
 
@@ -1050,20 +1050,38 @@ def comedy_show_bookings_edit(request, booking_id):
 
 
 def delete_comedy_show(request, show_id):
-    # Fetch the show or return 404
     show = get_object_or_404(ComedyShow, id=show_id)
-
     if request.method == 'POST':
-        # logic to delete the show
         show.delete()
         messages.success(request, 'Comedy show deleted successfully!')
-        return redirect('comedy_shows') # Replace with your actual list view name
-
-    # If GET request, render the confirmation page
+        return redirect('comedy_shows') 
     context = {
         'show': show
     }
     return render(request, 'admin_panel/comedy_show_delete_confirm.html', context)
+
+def edit_comedy_show_list(request, pk):
+    show = get_object_or_404(ComedyShow, pk=pk)
+    
+    if request.method == 'POST':
+        form = ComedyShowForm(request.POST, request.FILES, instance=show)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Show '{show.title}' updated successfully!")
+            return redirect('comedy_show_list') 
+    else:
+        form = ComedyShowForm(instance=show)
+    return render(request, 'admin_panel/comedys/edit_comedy_show.html', {
+        'form': form, 
+        'show': show
+    })
+
+def delete_comedy_show_list(request, pk):
+    if request.method == 'POST':
+        show = get_object_or_404(ComedyShow, pk=pk)
+        show.delete()
+        messages.warning(request, "Show has been deleted.")
+    return redirect('add_comedy_show') 
 
 
 # ========= OTHER VIEWS =========

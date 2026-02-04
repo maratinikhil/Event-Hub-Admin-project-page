@@ -1,0 +1,84 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h2 class="text-2xl font-bold text-white">Edit Comedy Show</h2>
+            <p class="text-slate-400 text-sm">Update the details for "{{ show.title }}"</p>
+        </div>
+        <a href="{% url 'comedy_shows_list' %}" class="text-slate-400 hover:text-white transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i> Back to List
+        </a>
+    </div>
+
+    <div class="bg-[#0f172a]/40 border border-white/5 rounded-2xl p-6 backdrop-blur-sm">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-300">Show Title</label>
+                    <input type="text" name="title" value="{{ show.title }}"
+                        class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-4 text-slate-200 focus:outline-none focus:border-amber-500/50 transition-colors">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-300">Comedian Name</label>
+                    <input type="text" name="comedian_name" value="{{ show.comedian_name }}"
+                        class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-4 text-slate-200 focus:outline-none focus:border-amber-500/50 transition-colors">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-300">Date</label>
+                    <input type="date" name="date" value="{{ show.date|date:'Y-m-d' }}"
+                        class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-4 text-slate-200 focus:outline-none focus:border-amber-500/50 transition-colors">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-300">Time</label>
+                    <input type="time" name="time" value="{{ show.time|time:'H:i' }}"
+                        class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-4 text-slate-200 focus:outline-none focus:border-amber-500/50 transition-colors">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-300">Ticket Price (₹)</label>
+                    <input type="number" name="ticket_price" value="{{ show.ticket_price }}"
+                        class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-4 text-slate-200 focus:outline-none focus:border-amber-500/50 transition-colors">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-300">Rating</label>
+                    <input type="number" step="0.1" name="rating" value="{{ show.rating }}"
+                        class="w-full bg-slate-900/50 border border-white/10 rounded-xl py-2.5 px-4 text-slate-200 focus:outline-none focus:border-amber-500/50 transition-colors">
+                </div>
+
+                <div class="md:col-span-2 space-y-2">
+                    <label class="text-sm font-medium text-slate-300">Show Poster</label>
+                    <div
+                        class="flex items-center gap-4 p-4 border border-dashed border-white/10 rounded-xl bg-slate-900/30">
+                        {% if show.image %}
+                        <img src="{{ show.image.url }}"
+                            class="w-16 h-16 object-cover rounded-lg border border-white/10">
+                        {% endif %}
+                        <input type="file" name="image"
+                            class="text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500/10 file:text-amber-500 hover:file:bg-amber-500/20">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4 pt-6 border-t border-white/5">
+                <button type="submit"
+                    class="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold py-3 rounded-xl hover:shadow-lg hover:shadow-amber-500/20 transition-all">
+                    Update Show Details
+                </button>
+                <a href="{% url 'add_comedy_show' %}"
+                    class="px-8 py-3 bg-white/5 text-slate-300 font-medium rounded-xl hover:bg-white/10 transition-colors text-center">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

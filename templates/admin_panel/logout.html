@@ -48,6 +48,7 @@
             background-color: #0f172a;
             /* Slate 900 */
             overflow: hidden;
+            transition: opacity 0.5s ease;
         }
 
         /* The Moving Gradients Background */
@@ -116,6 +117,17 @@
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
+
+        /* Countdown animation */
+        .countdown-digit {
+            display: inline-block;
+            min-width: 1.2em;
+            text-align: center;
+        }
+
+        .progress-ring {
+            transition: stroke-dashoffset 1s linear;
+        }
     </style>
 </head>
 
@@ -158,12 +170,23 @@
             </div>
 
             <div class="mb-8">
-                <div class="text-sm text-slate-400 mb-2">Redirecting in</div>
-                <div class="flex items-baseline justify-center">
-                    <span id="countdown"
-                        class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">30</span>
-                    <span class="ml-1 text-slate-500 font-medium">seconds</span>
+                <div class="text-sm text-slate-400 mb-4">Redirecting to login in</div>
+                <div class="relative w-32 h-32 mx-auto mb-2">
+                    <!-- Circular Progress Ring -->
+                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                        <!-- Background circle -->
+                        <circle cx="50" cy="50" r="45" stroke="#1e293b" stroke-width="8" fill="transparent" />
+                        <!-- Progress circle -->
+                        <circle id="progressCircle" cx="50" cy="50" r="45" stroke="#14b8a6" stroke-width="8"
+                            fill="transparent" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="283" />
+                    </svg>
+                    <!-- Countdown number -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span id="countdown"
+                            class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">5</span>
+                    </div>
                 </div>
+                <p class="text-xs text-slate-500 mt-2">seconds</p>
             </div>
 
             <div class="space-y-3">
@@ -190,29 +213,79 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            let count = 30;
+            let count = 5; // Start from 5 seconds
             const countdownEl = document.getElementById('countdown');
+            const progressCircle = document.getElementById('progressCircle');
+            const circumference = 2 * Math.PI * 45; // 2πr (r=45)
+            let timer;
 
-            const timer = setInterval(function () {
+            // Initialize progress circle
+            progressCircle.style.strokeDasharray = circumference;
+            progressCircle.style.strokeDashoffset = circumference;
+
+            function updateCountdown() {
+                // Update countdown number
+                countdownEl.textContent = count;
+
+                // Update progress circle (remove 1/5 of circumference each second)
+                const offset = circumference - (circumference * (5 - count) / 5);
+                progressCircle.style.strokeDashoffset = offset;
+
                 count--;
-                countdownEl.innerText = count;
 
                 if (count <= 0) {
                     clearInterval(timer);
-                    // Add a nice fade out effect before redirect
-                    document.body.style.opacity = '0';
-                    document.body.style.transition = 'opacity 0.5s ease';
+                    // Add fade out effect
+                    document.body.style.opacity = '0.5';
 
+                    // Redirect to admin login
                     setTimeout(() => {
                         window.location.href = "{% url 'admin_login' %}";
-                    }, 500);
+                    }, 300);
                 }
-            }, 1000);
+            }
 
-            // Stop timer if user clicks a link (to prevent weird redirects)
+            // Start the 5-second timer
+            timer = setInterval(updateCountdown, 1000);
+
+            // Initial update to show "5" immediately
+            updateCountdown();
+
+            // Stop timer if user clicks any button
             document.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => clearInterval(timer));
+                link.addEventListener('click', () => {
+                    clearInterval(timer);
+                    // Reset progress circle
+                    progressCircle.style.strokeDashoffset = circumference;
+                    countdownEl.textContent = '0';
+                });
             });
+
+            // Stop timer on escape key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    clearInterval(timer);
+                    countdownEl.textContent = 'Stopped';
+                    countdownEl.classList.remove('bg-gradient-to-r', 'from-teal-400', 'to-cyan-400');
+                    countdownEl.classList.add('text-slate-400');
+                }
+            });
+
+            // Handle tab visibility changes
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) {
+                    clearInterval(timer);
+                } else if (count > 0 && !timer) {
+                    timer = setInterval(updateCountdown, 1000);
+                }
+            });
+
+            // Add a safety redirect in case something goes wrong
+            setTimeout(() => {
+                if (count > 0) {
+                    window.location.href = "{% url 'admin_login' %}";
+                }
+            }, 7000); // 7 seconds as safety net
         });
     </script>
 </body>

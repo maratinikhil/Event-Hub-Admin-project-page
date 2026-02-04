@@ -93,6 +93,8 @@ urlpatterns = [
     path('bookings/view/<int:booking_id>/', views.comedy_show_bookings_view, name='comedy_show_bookings_view'),
     path('bookings/edit/<int:booking_id>/', views.comedy_show_bookings_edit, name='comedy_show_bookings_edit'),
     path('comedy-shows/delete/<int:show_id>/', views.delete_comedy_show, name='delete_comedy_show'),
+    path('show/edit/<int:pk>/', views.edit_comedy_show_list, name='edit_comedy_show_list'),
+    path('show/delete/<int:pk>/', views.delete_comedy_show_list, name='delete_comedy_show_list'),
 
 
 

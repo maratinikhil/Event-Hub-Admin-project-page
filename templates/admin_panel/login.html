@@ -32,11 +32,20 @@
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
                         'pulse-slow': 'pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin-slow': 'spin 1.5s linear infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'ping-slow': 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
+                        'wave': 'wave 1.5s ease-in-out infinite',
+                        'pulse-soft': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-10px)' },
+                        },
+                        wave: {
+                            '0%, 60%, 100%': { transform: 'translateY(0)' },
+                            '30%': { transform: 'translateY(-10px)' },
                         }
                     }
                 }
@@ -109,10 +118,341 @@
             -webkit-box-shadow: 0 0 0px 1000px #020617 inset;
             transition: background-color 5000s ease-in-out 0s;
         }
+
+        /* 5. Advanced React-like Loader Styles */
+        .react-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(2, 6, 23, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .react-loader.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* React Spinner Container */
+        .spinner-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        /* Orbital Rings - React Logo inspired */
+        .orbital-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            animation: spin 4s linear infinite;
+        }
+
+        .orbital-ring-1 {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-top: 2px solid #38bdf8;
+            border-right: 2px solid transparent;
+            animation-delay: 0s;
+        }
+
+        .orbital-ring-2 {
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            border-top: 2px solid #8b5cf6;
+            border-right: 2px solid transparent;
+            animation-delay: -0.5s;
+            animation-direction: reverse;
+        }
+
+        .orbital-ring-3 {
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            bottom: 30px;
+            border-top: 2px solid #ec4899;
+            border-right: 2px solid transparent;
+            animation-delay: -1s;
+        }
+
+        /* Central Core */
+        .spinner-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #38bdf8, #8b5cf6);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+            animation: pulse-soft 1.5s ease-in-out infinite;
+        }
+
+        /* Floating Dots */
+        .floating-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #38bdf8;
+            border-radius: 50%;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .dot-1 {
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation-delay: 0s;
+        }
+
+        .dot-2 {
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            animation-delay: 0.2s;
+        }
+
+        .dot-3 {
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation-delay: 0.4s;
+        }
+
+        .dot-4 {
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            animation-delay: 0.6s;
+        }
+
+        /* Progress Bar */
+        .progress-track {
+            width: 200px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 40px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #38bdf8, #8b5cf6);
+            border-radius: 10px;
+            animation: progress 2s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% {
+                width: 0%;
+                transform: translateX(-100%);
+            }
+
+            50% {
+                width: 100%;
+                transform: translateX(0%);
+            }
+
+            100% {
+                width: 0%;
+                transform: translateX(100%);
+            }
+        }
+
+        /* Wave Text Animation */
+        .wave-text {
+            display: flex;
+            gap: 4px;
+            margin-top: 20px;
+        }
+
+        .wave-text span {
+            display: inline-block;
+            color: #38bdf8;
+            font-weight: 600;
+            animation: wave 1.5s ease-in-out infinite;
+        }
+
+        .wave-text span:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .wave-text span:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .wave-text span:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        .wave-text span:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+
+        .wave-text span:nth-child(6) {
+            animation-delay: 0.5s;
+        }
+
+        .wave-text span:nth-child(7) {
+            animation-delay: 0.6s;
+        }
+
+        .wave-text span:nth-child(8) {
+            animation-delay: 0.7s;
+        }
+
+        /* Glowing Pulse Effect */
+        @keyframes glow-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(56, 189, 248, 0.6);
+            }
+        }
+
+        /* Quantum Dots Effect */
+        .quantum-dots {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .quantum-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #38bdf8;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: quantum-float 3s ease-in-out infinite;
+        }
+
+        @keyframes quantum-float {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+                opacity: 0.2;
+            }
+
+            25% {
+                transform: translate(20px, -20px);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: translate(-10px, 30px);
+                opacity: 0.8;
+            }
+
+            75% {
+                transform: translate(30px, 10px);
+                opacity: 0.4;
+            }
+        }
+
+        /* Step Indicators */
+        .step-indicator {
+            display: flex;
+            gap: 8px;
+            margin-top: 30px;
+        }
+
+        .step {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: #38bdf8;
+            transform: scale(1.2);
+            box-shadow: 0 0 10px #38bdf8;
+        }
     </style>
 </head>
 
 <body class="antialiased min-h-screen flex items-center justify-center relative font-sans selection:bg-sky-500/30">
+
+    <!-- React-like Advanced Loader -->
+    <div id="reactLoader" class="react-loader">
+        <div class="text-center">
+            <div class="spinner-container mb-6">
+                <!-- Quantum Dots Background -->
+                <div class="quantum-dots">
+                    <div class="quantum-dot" style="top: 20%; left: 20%;"></div>
+                    <div class="quantum-dot" style="top: 60%; left: 80%; animation-delay: 1s;"></div>
+                    <div class="quantum-dot" style="top: 80%; left: 40%; animation-delay: 2s;"></div>
+                </div>
+
+                <!-- Orbital Rings -->
+                <div class="orbital-ring orbital-ring-1"></div>
+                <div class="orbital-ring orbital-ring-2"></div>
+                <div class="orbital-ring orbital-ring-3"></div>
+
+                <!-- Floating Dots -->
+                <div class="floating-dot dot-1"></div>
+                <div class="floating-dot dot-2"></div>
+                <div class="floating-dot dot-3"></div>
+                <div class="floating-dot dot-4"></div>
+
+                <!-- Central Core -->
+                <div class="spinner-core"></div>
+            </div>
+
+            <!-- Wave Text -->
+            <div class="wave-text mb-4">
+                <span>L</span>
+                <span>O</span>
+                <span>A</span>
+                <span>D</span>
+                <span>I</span>
+                <span>N</span>
+                <span>G</span>
+                <span>.</span>
+                <span>.</span>
+                <span>.</span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-track">
+                <div class="progress-bar"></div>
+            </div>
+
+            <!-- Status Steps -->
+            <div class="step-indicator mb-4" id="stepIndicator">
+                <div class="step" id="step1"></div>
+                <div class="step" id="step2"></div>
+                <div class="step" id="step3"></div>
+                <div class="step" id="step4"></div>
+                <div class="step" id="step5"></div>
+            </div>
+
+            <!-- Status Messages -->
+            <p id="statusMessage" class="text-slate-300 text-sm font-medium transition-all duration-300">
+                Initializing security protocols...
+            </p>
+        </div>
+    </div>
 
     <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div class="glow-orb w-[500px] h-[500px] bg-indigo-600 top-[-10%] left-[-10%] animate-pulse-slow"></div>
@@ -223,6 +563,17 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Clear any previous login redirect flags IMMEDIATELY when page loads
+            sessionStorage.removeItem('loginRedirecting');
+
+            // Check if we're coming from logout
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromLogout = urlParams.get('from') === 'logout';
+
+            if (fromLogout) {
+                hideReactLoader();
+            }
+
             // Password Toggle
             const toggleBtn = document.getElementById('togglePassword');
             const passwordInput = document.getElementById('password');
@@ -241,11 +592,129 @@
             const btnText = document.getElementById('btnText');
             const btnSpinner = document.getElementById('btnSpinner');
 
-            form.addEventListener('submit', () => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                // Basic form validation
+                const username = form.querySelector('input[name="username"]').value.trim();
+                const password = form.querySelector('input[name="password"]').value.trim();
+
+                if (!username || !password) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                // Show advanced React-like loader
+                showReactLoader();
+
+                // Start step animation
+                animateSteps();
+
+                // Set session storage flag
+                sessionStorage.setItem('loginRedirecting', 'true');
+
+                // Show button loading state
                 btn.disabled = true;
                 btn.classList.add('opacity-80', 'cursor-not-allowed');
                 btnText.classList.add('hidden');
                 btnSpinner.classList.remove('hidden');
+
+                // Submit the form after animation sequence
+                setTimeout(() => {
+                    form.submit();
+                }, 3000); // Longer delay to show the animation sequence
+            });
+
+            // Function to show React-like loader
+            function showReactLoader() {
+                const loader = document.getElementById('reactLoader');
+                if (loader) {
+                    loader.classList.add('active');
+                }
+            }
+
+            // Function to hide React-like loader
+            function hideReactLoader() {
+                const loader = document.getElementById('reactLoader');
+                if (loader) {
+                    loader.classList.remove('active');
+                }
+
+                // Reset form button state
+                if (btn && btnText && btnSpinner) {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-80', 'cursor-not-allowed');
+                    btnText.classList.remove('hidden');
+                    btnSpinner.classList.add('hidden');
+                }
+            }
+
+            // Animate steps like React's loading states
+            function animateSteps() {
+                const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
+                const messages = [
+                    'Initializing security protocols...',
+                    'Authenticating credentials...',
+                    'Verifying permissions...',
+                    'Loading user preferences...',
+                    'Preparing dashboard interface...'
+                ];
+
+                const statusMessage = document.getElementById('statusMessage');
+                const stepElements = steps.map(id => document.getElementById(id));
+
+                let currentStep = 0;
+
+                const stepInterval = setInterval(() => {
+                    // Update current step
+                    stepElements.forEach((step, index) => {
+                        if (index === currentStep) {
+                            step.classList.add('active');
+                        } else {
+                            step.classList.remove('active');
+                        }
+                    });
+
+                    // Update status message
+                    if (currentStep < messages.length) {
+                        statusMessage.textContent = messages[currentStep];
+                        statusMessage.style.opacity = '1';
+                    }
+
+                    currentStep++;
+
+                    // Stop after all steps
+                    if (currentStep >= steps.length) {
+                        clearInterval(stepInterval);
+                        // Final message
+                        setTimeout(() => {
+                            statusMessage.textContent = 'Redirecting to dashboard...';
+                            statusMessage.style.color = '#38bdf8';
+                        }, 500);
+                    }
+                }, 500); // Each step lasts 0.5 seconds
+            }
+
+            // Hide loader if user goes back
+            window.addEventListener('pageshow', function (event) {
+                if (event.persisted) {
+                    hideReactLoader();
+                    sessionStorage.removeItem('loginRedirecting');
+                }
+            });
+
+            // Clear flags when clicking on any links except the form submit
+            document.addEventListener('click', function (e) {
+                if (e.target.tagName === 'A' || e.target.closest('a')) {
+                    sessionStorage.removeItem('loginRedirecting');
+                }
+            });
+
+            // Clear flags on page visibility change
+            document.addEventListener('visibilitychange', function () {
+                if (document.visibilityState === 'hidden') {
+                    sessionStorage.removeItem('loginRedirecting');
+                }
             });
         });
     </script>
